@@ -1,0 +1,13 @@
+combo_mCW_on {
+    bindings = <&cw_mON>;
+    key-positions = <16 19>;
+    slow-release;
+    layers = <mBAS>;
+};
+
+combo_mCW_off {
+    bindings = <&cw_mOFF>;
+    key-positions = <14 21>;
+    slow-release;
+    layers = <mBAS>;
+};

@@ -1,0 +1,168 @@
+        mac_base_layer {
+            #define MB13  &hm_mBAS_LC  LCTRL  0  //A
+            #define MB14  &hm          LCMD   R
+            #define MB15  &hm          LALT   S
+            #define MB16  &hm          LSHFT  T
+
+            #define MB19  &hm_mBAS_RS  RSHFT  0  //N
+            #define MB20  &hm_mBAS_RA  LALT   0  //E
+            #define MB21  &hm_mBAS_RC  RCMD   0  //I
+            #define MB22  &hm_mBAS_RG  RCTRL  0  //O
+
+            #define MB35  &mp_m_stg
+
+            #define MB36  &mp_m_dev
+            #define MB38  &mo_mAXNmBAS_to_mAXN  0  0
+            #define MB39  &mo_mAXNmBAS_to_mFNK  0  0
+            #define MB41  &mp_m_dev
+
+            display-name = "mBAS";
+            bindings = <
+    MKY_ESC  &kp Q  &kp W  &kp F    &kp P  &kp B             &kp J    &kp L  &mp_mi_u  &mp_mi_y   &mp_k_m   MNV_DEL
+  &mp_mk_bc   MB13   MB14   MB15     MB16  &kp G             &kp M     MB19      MB20      MB21      MB22  MNV_BSPC
+    MKY_TAB  &kp Z  &kp X  &kp C    &kp D  &kp V             &kp K    &kp H    &mp_cs    &mp_dc  &mp_mk_q      MB35
+                            MB36  KEY_SPC   MB38              MB39  MKY_RET      MB41
+            >;
+        };
+
+        mac_dev_layer {
+            #define MD13  &hm          LCTRL   AMPS
+            #define MD14  &hm          LCMD    LBRC
+            #define MD15  &hm          LALT    RBRC
+            #define MD16  &hm          LSHFT   EQUAL
+
+            #define MD19  &hm_mDEV_RS  RSHFT   0
+            #define MD20  &hm_mDEV_RA  LALT    0
+            #define MD21  &hm_mDEV_RC  RCMD    0
+            #define MD22  &hm          RCTRL   PIPE
+
+            #define MD35  &kp LA(LG(I))                 // tap: dev tools
+
+            #define MD38  &mo_mAXNmDEV_to_mBAS  0  0
+            #define MD39  &mo_mAXNmDEV_to_mAXN  0  0
+
+            display-name = "mDEV";
+            bindings = <
+    MKY_ESC     &kp AT  &mp_mDEV_pound  &mp_mDEV_money    &kp PLUS   &m_mi_d               &m_mi_t    &kp MINUS     &kp UNDER    &kp PRCNT      &m_mi_c   MNV_DEL
+  &mp_mk_bc       MD13            MD14            MD15        MD16   &m_mi_s               &m_mi_g         MD19          MD20         MD21         MD22  MNV_BSPC
+    MKY_TAB  &kp LG(R)        &kp LPAR        &kp RPAR   &kp ASTRK  &kp BSLH            &mp_mDEV_s  &mp_mDEV_qs        &kp LT       &kp GT  &mp_mDEV_ql      MD35
+                                                &mp_cs     KEY_SPC      MD38                  MD39      MKY_RET        &mp_dc
+            >;
+        };
+
+        mac_act_num_layer {
+            #define MA01  &kp  LC(LS(LG(RIGHT)))        // tap: expand selection
+            #define MA05  &kp  LG(F)                    // tap: find
+            #define MA13  &hm  LCTRL  LC(LS(LG(LEFT)))  // tap: shrink selection
+            #define MA14  &hm  LCMD   LEFT
+            #define MA15  &hm  LALT   DOWN
+            #define MA16  &hm  LSHFT  RIGHT
+            #define MA17  &kp  LA(LG(F))                // tap: replace
+
+            #define MA19  &hm  LSHFT  N4
+            #define MA20  &hm  LALT   N5
+            #define MA21  &hm  LCMD   N6
+            #define MA22  &hm  LCTRL  DOT
+
+            #define MA38  &to_mBAS
+            #define MA39  &mo_mFNKmAXN_to_mFNK    0 0
+
+            #define MKY_UNDO   &kp RG(Z)       // tap: undo
+            #define MKY_REDO   &kp RS(RG(Z))   // tap: redo
+            #define MKY_CUT    &kp RG(X)       // tap: cut
+            #define MKY_COPY   &kp RG(C)       // tap: copy
+            #define MKY_PASTE  &mp_ma_paste    // tap: paste | shift: paste without format
+
+            display-name = "mAXN";
+            bindings = <
+    MKY_ESC      MA01  &mp_ma_prev    &kp UP  &mp_ma_next      MA05            &kp KP_PLUS   &kp N7  &kp N8  &kp N9  &kp KP_MULTIPLY    MNV_DEL
+  &mp_mk_bc      MA13         MA14      MA15         MA16      MA17                 &kp N0     MA19    MA20    MA21             MA22   MNV_BSPC
+    MKY_TAB  MKY_UNDO      MKY_CUT  MKY_COPY    MKY_PASTE  MKY_REDO                &mp_k_m   &kp N1  &kp N2  &kp N3    &kp KP_DIVIDE  &kp EQUAL
+                                       &none      KEY_SPC      MA38                   MA39  MKY_RET   &none
+            >;
+        };
+
+        mac_functions_layer {
+            #define MK13  &hm  LCMD   F5
+            #define MK14  &hm  LCTRL  F6
+            #define MK15  &hm  LALT   F7
+            #define MK16  &hm  LSHFT  F8
+
+            #define MK19  &hm  RSHFT  HOME
+            #define MK20  &hm  LALT   PG_DN
+            #define MK21  &hm  RCTRL  END
+            #define MK22  &kp  RCMD
+
+            #define MK38  &to_mBAS
+            #define MK39  &to_mAXN
+
+            display-name = "mFNK";
+            bindings = <
+    MKY_ESC  &kp F9  &kp F10  &kp F11  &kp F12  &none                  &none    &none  &kp PG_UP  &none  &none   MNV_DEL
+  &mp_mk_bc    MK13     MK14     MK15     MK16  &none                  &none     MK19       MK20   MK21   MK22  MNV_BSPC
+    MKY_TAB  &kp F1   &kp F2   &kp F3   &kp F4  &none                  &none    &none      &none  &none  &none     &none
+                                &none  KEY_SPC   MK38                   MK39  MKY_RET      &none
+            >;
+        };
+
+        mac_settings_layer {
+            #define MSLU0  MKY_ESC
+            #define MSLU1  &m_s_b1
+            #define MSLU2  &m_s_b2
+            #define MSLU3  &none
+            #define MSLU4  &kp LG(LS(C))                // tap: color picker
+            #define MSLU5  &kp RG(PLUS)                 // tap: zoom in
+
+            #define MSLM0  &kp LC(LA(SPACE))            // tap: input source
+            #define MSLM1  &hm_mSTG_LC  LCTRL  0        // tap: m_s_b3
+            #define MSLM2  &m_s_b4
+            #define MSLM3  &kp LALT
+            #define MSLM4  &hm_mSTG_LS  LSHFT  0        // tap: mp_mSTG_screenshot
+            #define MSLM5  &mp_ma_zoom_reset            // tap: zoom reset | shift: zoom reset on vscode
+
+            #define MSLD0  &mp_sSTG_cb                  // tap: none | shift: clear current profile | alt: clear all profiles
+            #define MSLD1  &m_s_b5
+            #define MSLD2  &m_s_b6
+            #define MSLD3  &none
+            #define MSLD4  &mp_mSTG_f                   // tap: (finder) file explorer | alt: show/hide system files
+            #define MSLD5  &kp RG(MINUS)                // tap: zoom out
+
+
+            #define MSRU0  &kp C_VOL_UP
+            #define MSRU1  &mp_mSTG_topleft             // tap: ide explorer | alt: rectangle top left
+            #define MSRU2  &mp_mSTG_up                  // tap: ide source control | alt: rectangle top halt
+            #define MSRU3  &mp_mSTG_topright            // tap: ide debugger | alt: rectangle top right
+            #define MSRU4  &kp LS(LG(X))                // tap: ide extensions 
+            #define MSRU5  &kp LC(LS(LG(T)))            // tap: ide todo                 // tap: ide                       
+
+            #define MSRM0  &mp_mSTG_m                   // tap: vol mute | shift: mic mute
+            #define MSRM1  &hm_mSTG_RS  LSHIFT 0        // tap: mp_mSTG_left
+            #define MSRM2  &hm_mSTG_RA  LALT   0        // tap: mp_mSTG_rectangle
+            #define MSRM3  &mp_mSTG_right               // tap: ide secondary side bar | alt: rectangle right
+            #define MSRM4  &kp LC(UP)                   // tap: mission control
+            #define MSRM5  &none
+
+            #define MSRD0  &kp C_VOL_DN
+            #define MSRD1  &mp_mSTG_downleft            // tap: none | alt: rectangle bottom left
+            #define MSRD2  &mp_mSTG_down                // tap: ide panel bottom bar | alt: rectangle bottom down
+            #define MSRD3  &mp_mSTG_downright           // tap: none | alt: rectangle bottom right
+            #define MSRD4  &kp LC(DOWN)                 // tap: application window
+            #define MSRD5  &none                 
+
+            #define MSLT2  &kp C_BRI_DN
+            #define MSLT1  KEY_SPC
+            #define MSLT0  &to_mBAS
+
+            #define MSRT0  &to_mAXN
+            #define MSRT1  MKY_RET
+            #define MSRT2  &kp C_BRI_UP
+
+
+            display-name = "mSTG";
+            bindings = <
+              MSLU0  MSLU1  MSLU2  MSLU3  MSLU4  MSLU5    MSRU0  MSRU1  MSRU2  MSRU3  MSRU4  MSRU5
+              MSLM0  MSLM1  MSLM2  MSLM3  MSLM4  MSLM5    MSRM0  MSRM1  MSRM2  MSRM3  MSRM4  MSRM5
+              MSLD0  MSLD1  MSLD2  MSLD3  MSLD4  MSLD5    MSRD0  MSRD1  MSRD2  MSRD3  MSRD4  MSRD5
+                                   MSLT2  MSLT1  MSLT0    MSRT0  MSRT1  MSRT2
+            >;
+        };

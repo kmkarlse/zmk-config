@@ -1,0 +1,6 @@
+/* Shared Keys */
+#define MKY_ESC  &to_mBAS_kp  0        ESC  // tap: esc    | long-tap: BAS layer
+#define MKY_RET  &mt          F2       RET  // tap: return | long-tap: vscode easy rename
+#define MKY_TAB  &mt          RIGHT    TAB  // tap: tab    | long-tap: right (terminal autocompletion)
+#define MNV_BSPC &mt          LA(BSPC) BSPC // tap: bspc   | long-tap: delete word backward
+#define MNV_DEL  &mt          LA(DEL)  DEL  // tap: del    | long-tap: delete word forward

@@ -1,0 +1,139 @@
+        windows_base_layer {
+            #define WB13  &hm_wBAS_LC  LCMD  0  //A
+            #define WB14  &hm  LCTRL   R
+            #define WB15  &hm  LALT    S
+            #define WB16  &hm  LSHFT   T
+
+            #define WB19  &hm_wBAS_RS  RSHFT  0  //N
+            #define WB20  &hm_wBAS_RA  LALT   0  //E
+            #define WB21  &hm_wBAS_RC  RCTRL  0  //I
+            #define WB22  &hm_wBAS_RG  RCMD   0  //O
+
+            #define WB35  &mp_w_stg
+
+            #define WB36  &mp_w_dev
+            #define WB38  &mo_wAXNwBAS_to_wAXN  0  0
+            #define WB39  &mo_wAXNwBAS_to_wFNK  0  0
+            #define WB41  &mp_w_dev
+
+            display-name = "wBAS";
+            bindings = <
+    WKY_ESC  &kp Q  &kp W  &kp F    &kp P  &kp B             &kp J    &kp L  &mp_wi_u  &mp_wi_y   &mp_k_m   NAV_DEL
+  &mp_wk_bc   WB13   WB14   WB15     WB16  &kp G             &kp M     WB19      WB20      WB21      WB22  NAV_BSPC
+    WKY_TAB  &kp Z  &kp X  &kp C    &kp D  &kp V             &kp K    &kp H    &mp_cs    &mp_dc  &mp_wk_q      WB35
+                            WB36  KEY_SPC   WB38              WB39  WKY_RET      WB41
+            >;
+        };
+
+        windows_dev_layer {
+            #define WD13  &hm          LCMD    AMPS
+            #define WD14  &hm          LCTRL   LBRC
+            #define WD15  &hm          LALT    RBRC
+            #define WD16  &hm          LSHFT   EQUAL
+
+            #define WD19  &hm_wDEV_RS  RSHFT   0
+            #define WD20  &hm_wDEV_RA  LALT    0
+            #define WD21  &hm_wDEV_RC  RCTRL   0
+            #define WD22  &hm          RCMD    PIPE
+
+            #define WD38  &mo_wAXNwDEV_to_wBAS  0  0
+            #define WD39  &mo_wAXNwDEV_to_wAXN  0  0
+
+            display-name = "wDEV";
+            bindings = <
+    WKY_ESC     &kp AT  &mp_wDEV_pound  &mp_wDEV_money    &kp PLUS   &m_wi_d               &m_wi_t    &kp MINUS     &kp UNDER    &kp PRCNT      &m_wi_c   NAV_DEL
+  &mp_wk_bc       WD13            WD14            WD15        WD16   &m_wi_s               &m_wi_g         WD19          WD20         WD21         WD22  NAV_BSPC
+    WKY_TAB  &kp LC(R)        &kp LPAR        &kp RPAR   &kp ASTRK  &kp BSLH            &mp_wDEV_s  &mp_wDEV_qs        &kp LT       &kp GT  &mp_wDEV_ql   &kp F12
+                                                &mp_cs     KEY_SPC      WD38                  WD39      WKY_RET        &mp_dc
+            >;
+        };
+
+        windows_act_num_layer {
+            #define WA01  &kp  LA(LS(RIGHT))          // tap: expand selection
+            #define WA05  &kp  LC(F)                  // tap: find
+            #define WA13  &hm  LCMD   LA(LS(LEFT))    // tap: shrink selection
+            #define WA14  &hm  LCTRL  LEFT
+            #define WA15  &hm  LALT   DOWN
+            #define WA16  &hm  LSHFT  RIGHT
+            #define WA17  &kp  LC(H)                  // tap: replace
+
+            #define WA19  &hm  LSHFT  N4
+            #define WA20  &hm  LALT   N5
+            #define WA21  &hm  LCTRL  N6
+            #define WA22  &hm  LCMD   EQUAL
+
+            #define WA35  &hm  LG(LC(F4))  LG(LC(D))  // tap: create | hold: close (virtual desktop)
+
+            #define WA38  &to_wBAS
+            #define WA39  &mo_wFNKwAXN_to_wFNK    0 0
+
+            #define WKY_UNDO   &kp RC(Z)       // tap: undo
+            #define WKY_REDO   &kp RC(Y)       // tap: redo
+            #define WKY_CUT    &kp RC(X)       // tap: cut
+            #define WKY_COPY   &kp RC(C)       // tap: copy
+            #define WKY_PASTE  &kp RC(V)       // tap: paste     | shift: paste without format
+
+            display-name = "wAXN";
+            bindings = <
+    WKY_ESC      WA01  &mp_wa_prev    &kp UP  &mp_wa_next      WA05            &kp KP_PLUS   &kp N7  &kp N8  &kp N9  &kp KP_MULTIPLY   NAV_DEL
+  &mp_wk_bc      WA13         WA14      WA15         WA16      WA17                 &kp N0     WA19    WA20    WA21             WA22  NAV_BSPC
+    WKY_TAB  WKY_UNDO      WKY_CUT  WKY_COPY    WKY_PASTE  WKY_REDO                &mp_k_m   &kp N1  &kp N2  &kp N3    &kp KP_DIVIDE      WA35
+                                      &mp_cs      KEY_SPC      WA38                   WA39  WKY_RET  &mp_dc
+            >;
+        };
+
+        windows_functions_layer {
+            #define WK13  &hm  LCMD   F5
+            #define WK14  &hm  LCTRL  F6
+            #define WK15  &hm  LALT   F7
+            #define WK16  &hm  LSHFT  F8
+
+            #define WK19  &hm  RSHFT  HOME
+            #define WK20  &hm  LALT   PG_DN
+            #define WK21  &hm  RCTRL  END
+            #define WK22  &kp RCMD
+
+            #define WK38  &to_wBAS
+            #define WK39  &to_wAXN
+
+            display-name = "wFNK";
+            bindings = <
+    WKY_ESC  &kp F9  &kp F10  &kp F11  &kp F12  &none                  &none    &none  &kp PG_UP  &none  &none   NAV_DEL
+  &mp_wk_bc    WK13     WK14     WK15     WK16  &none                  &none     WK19       WK20   WK21   WK22  NAV_BSPC
+    WKY_TAB  &kp F1   &kp F2   &kp F3   &kp F4  &none                  &none    &none      &none  &none  &none     &none
+                               &mp_cs  KEY_SPC   WK38                   WK39  WKY_RET     &mp_dc
+            >;
+        };
+
+        windows_settings_layer {
+            #define WS10  &kp LG(LS(GRAVE))    // tap: fancy zones
+            #define WS11  &kp LC(LS(ESC))      // tap: task manager
+            #define WS12  &kp LG(SPACE)        // tap: input source
+            #define WS24  &mp_sSTG_cb          // tap: none | shift: clear current profile | alt: clear all profiles
+
+            #define WS22  &kp RG(PAUSE_BREAK)  // tap: system info
+            #define WS23  &kp RG(I)            // tap: windows settings
+            #define WS34  &kp LC(LA(DEL))      // tap: windows security
+
+            #define WS04  &kp LG(LS(C))        // tap: color picker
+            #define WS05  &kp RC(PLUS)         // tap: zoom in
+            #define WS16  &mp_mSTG_screenshot
+            #define WS17  &mp_wa_zoom_reset    // tap: zoom reset | shift: zoom reset on vscode
+            #define WS28  &kp LG(E)            // tap: file explorer
+            #define WS29  &kp RC(MINUS)        // tap: zoom out
+
+            #define WS07  &kp LA(LG(SQT))      // tap: magnifier in
+            #define WS18  &kp LA(LG(N8))       // tap: magnifier reset
+            #define WS19  &hm RSHFT  C_PREV
+            #define WS20  &hm LALT   C_PP
+            #define WS30  &kp LA(LG(MINUS))    // tap: magnifier out
+
+            display-name = "wSTG";
+            bindings = <
+       WKY_ESC  &m_s_b1  &m_s_b2  &none     WS04      WS05                   WS07  &kp C_VOL_DN    &kp C_MUTE  &kp C_VOL_UP  WS10   WS11
+          WS12  &m_s_b3  &m_s_b4  &none     WS16      WS17                   WS18          WS19          WS20     &kp C_NEXT  WS22   WS23
+          WS24  &m_s_b5  &m_s_b6  &none     WS28      WS29                   WS30         &none         &none         &none  WS34  &none
+                           &kp C_BRI_DN  KEY_SPC  &to_wBAS               &to_wAXN       WKY_RET  &kp C_BRI_UP
+            >;
+        };
+

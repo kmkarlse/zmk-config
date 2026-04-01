@@ -1,0 +1,9 @@
+//mp_aDEV_ql
+MORPH_KS(
+    a,
+    DEV,
+    ql,
+    question_logical,
+    &m_ad_oco,  // tap:    ?.
+    &m_ad_cto   // shift:  ?░:░
+)

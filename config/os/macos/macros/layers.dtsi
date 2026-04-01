@@ -1,0 +1,35 @@
+TO_MACRO(m, DEV)  //to_mDEV
+TO_MACRO(m, AXN)  //to_mAXN
+TO_MACRO(m, FNK)  //to_mFNK
+TO_MACRO(m, STG)  //to_mSTG
+
+MOTO_MACRO(m, AXN, BAS)  //mo_mAXN_to_mBAS
+MOTO_MACRO(m, AXN, DEV)  //mo_mAXN_to_mDEV
+MOTO_MACRO(m, STG, BAS)  //mo_mSTG_to_mBAS
+MOTO_MACRO(m, DEV, BAS)  //mo_mDEV_to_mBAS
+MOTO_MACRO(m, FNK, AXN)  //mo_mFNK_to_mAXN
+
+cw_mCAPS: cw_mCAPS {
+    compatible = "zmk,behavior-macro";
+    #binding-cells = <0>;
+    tap-ms = <MC_TAP>;
+    bindings
+        = <&kp LS(H_mCWR)>
+        , <&kp CAPS>;
+};
+
+cw_mON: cw_mON {
+    compatible = "zmk,behavior-macro";
+    #binding-cells = <0>;
+    bindings
+        = <&kp LA(H_mCWR)>
+        , <&cw>;
+};
+
+cw_mOFF: cw_mOFF {
+    compatible = "zmk,behavior-macro";
+    #binding-cells = <0>;
+    bindings
+        = <&kp LS(LC(H_mCWR))>
+        , <&kp K_CANCEL>;
+};

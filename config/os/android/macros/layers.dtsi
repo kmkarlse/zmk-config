@@ -1,0 +1,24 @@
+TO_MACRO(a, DEV)  //to_aDEV
+TO_MACRO(a, AXN)  //to_aAXN
+TO_MACRO(a, FNK)  //to_aFNK
+TO_MACRO(a, STG)  //to_aSTG
+
+MOTO_MACRO(a, AXN, BAS)  //mo_aAXN_to_aBAS
+MOTO_MACRO(a, AXN, DEV)  //mo_aAXN_to_aDEV
+MOTO_MACRO(a, STG, BAS)  //mo_aSTG_to_aBAS
+MOTO_MACRO(a, DEV, BAS)  //mo_aDEV_to_aBAS
+MOTO_MACRO(a, FNK, AXN)  //mo_aFNK_to_aAXN
+
+cw_aON: cw_aON {
+    compatible = "zmk,behavior-macro";
+    #binding-cells = <0>;
+    bindings =
+        <&kp LC(H_aCWR) &cw>;
+};
+
+cw_aOFF: cw_aOFF {
+    compatible = "zmk,behavior-macro";
+    #binding-cells = <0>;
+    bindings =
+        <&kp LA(H_aCWR) &kp K_CANCEL>;
+};

@@ -1,0 +1,22 @@
+/* Home Row */
+#define HR_FLAVOR     "balanced"
+#define HR_TAPPING    220
+#define HR_QUICK_TAP  125
+
+/* Mod Tap */
+#define MT_TAPPING    220
+#define MT_QUICK_TAP  200
+
+/* Hold Tap Preferred */
+#define HP_TAPPING    220
+#define HP_QUICK_TAP  200
+
+/* Macro */
+#define MC_WAIT_START 400
+#define MC_WAIT       100
+#define MC_TAP        200
+#define MC_LAYERS       0
+
+/* Key Positions */
+#define KP_RIGHT      6   7   8   9  10  11  18  19  20  21  22  23  30  31  32  33  34  35  39  40  41
+#define KP_LEFT       0   1   2   3   4   5  12  13  14  15  16  17  24  25  26  27  28  29  36  37  38

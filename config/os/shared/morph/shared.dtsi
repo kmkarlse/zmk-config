@@ -1,0 +1,32 @@
+cw: caps_word {
+    compatible = "zmk,behavior-caps-word";
+    #binding-cells = <0>;
+    continue-list = <UNDERSCORE MINUS BACKSPACE DEL>;
+};
+
+// tap:     BACKSPACE
+// shift:   CAPS_LOCK
+mp_bc: morph_backspace_caps {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <NAV_BSPC>, <&kp CAPS>;
+};
+
+// tap:     ,
+// shift:   ;
+mp_cs: morph_comma_semi {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <&kp COMMA>, <&kp SEMICOLON>;
+};
+
+// tap:     .
+// shift:   :
+mp_dc: morph_dot_colon {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <&kp DOT>, <&kp COLON>;
+};

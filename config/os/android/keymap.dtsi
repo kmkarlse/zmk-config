@@ -1,0 +1,170 @@
+        android_base_layer {
+            #define AB13  &hm_aBAS_LG  LCMD   0  //A
+            #define AB14  &hm  LCTRL   R
+            #define AB15  &hm  LALT    S
+            #define AB16  &hm  LSHFT   T
+
+            #define AB19  &hm_aBAS_RS  RSHFT  0  //N
+            #define AB20  &hm_aBAS_RA  RALT   0  //E
+            #define AB21  &hm_aBAS_RC  RCTRL  0  //I
+            #define AB22  &hm_aBAS_RG  RCMD   0  //O
+
+            #define AB35  &mp_a_stg
+
+            #define AB36  &mp_a_dev
+            #define AB38  &mo_aAXNaBAS_to_aAXN  0  0
+            #define AB39  &mo_aAXNaBAS_to_aFNK  0  0
+            #define AB41  &mp_a_dev
+
+            display-name = "aBAS";
+            bindings = <
+    AKY_ESC  &kp Q  &kp W  &kp F    &kp P  &kp B             &kp J    &kp L  &mp_ai_u  &mp_ai_y   &mp_k_m   NAV_DEL
+     &mp_bc   AB13   AB14   AB15     AB16  &kp G             &kp M     AB19      AB20      AB21      AB22  NAV_BSPC
+    AKY_TAB  &kp Z  &kp X  &kp C    &kp D  &kp V             &kp K    &kp H    &mp_cs    &mp_dc  &mp_ak_q      AB35
+                            AB36  KEY_SPC   AB38              AB39  AKY_RET      AB41
+            >;
+        };
+
+        android_dev_layer {
+            #define AD13  &hm          LCMD    AMPS
+            #define AD14  &hm          LCTRL   LBRC
+            #define AD15  &hm          LALT    RBRC
+            #define AD16  &hm          LSHFT   EQUAL
+
+            #define AD19  &hm          RSHFT   EXCL
+            #define AD20  &hm          RALT    LBKT
+            #define AD21  &hm          RCTRL   RBKT
+            #define AD22  &hm          RCMD    PIPE
+
+            #define AD38  &mo_aAXNaDEV_to_aBAS  0  0
+            #define AD39  &mo_aAXNaDEV_to_aAXN  0  0
+
+            display-name = "aDEV";
+            bindings = <
+    AKY_ESC     &kp AT &kp POUND  &kp DLLR    &kp PLUS   &m_ai_d               &m_ai_t    &kp MINUS    &kp UNDER    &kp PRCNT      &m_ai_c   NAV_DEL
+     &mp_bc       AD13      AD14      AD15        AD16   &m_ai_s               &m_ai_g         AD19         AD20         AD21         AD22  NAV_BSPC
+    AKY_TAB  &kp LC(R)  &kp LPAR  &kp RPAR   &kp ASTRK  &kp BSLH              &kp FSLH    &kp QMARK       &kp LT       &kp GT  &mp_aDEV_ql     &none
+                                    &mp_cs     KEY_SPC      AD38                  AD39      AKY_RET       &mp_dc
+            >;
+        };
+
+        android_act_num_layer {
+            #define AA01  &kp  LA(LS(RIGHT))        // tap: expand selection
+            #define AA02  &kp  LC(LS(TAB))          // tap: prev tab
+            #define AA04  &kp  LC(TAB)              // tap: next tab
+            #define AA05  &kp  LC(F)                // tap: find
+            #define AA13  &hm  LCMD   LA(LS(LEFT))  // tap: shrink selection
+            #define AA14  &hm  LCTRL  LEFT
+            #define AA15  &hm  LALT   DOWN
+            #define AA16  &hm  LSHFT  RIGHT
+            #define AA17  &kp  LC(H)                // tap: replace
+
+            #define AA19  &hm  RSHFT  N4
+            #define AA20  &hm  RALT   N5
+            #define AA21  &hm  RCTRL  N6
+            #define AA22  &hm  RCMD   EQUAL
+
+            #define AA38  &to_aBAS
+            #define AA39  &mo_aFNKaAXN_to_aFNK    0 0
+
+            #define AKY_UNDO   &kp LC(Z)       // tap: undo
+            #define AKY_REDO   &kp LC(LS(Z))   // tap: redo
+            #define AKY_CUT    &kp LC(X)       // tap: cut
+            #define AKY_COPY   &kp LC(C)       // tap: copy
+            #define AKY_PASTE  &kp LC(V)       // tap: paste
+
+            display-name = "aAXN";
+            bindings = <
+    AKY_ESC      AA01     AA02    &kp UP       AA04      AA05            &kp KP_PLUS   &kp N7  &kp N8  &kp N9  &kp KP_MULTIPLY   NAV_DEL
+     &mp_bc      AA13     AA14      AA15       AA16      AA17                 &kp N0     AA19    AA20    AA21             AA22  NAV_BSPC
+    AKY_TAB  AKY_UNDO  AKY_CUT  AKY_COPY  AKY_PASTE  AKY_REDO                &mp_k_m   &kp N1  &kp N2  &kp N3    &kp KP_DIVIDE     &none
+                                  &mp_cs    KEY_SPC      AA38                   AA39  AKY_RET  &mp_dc
+            >;
+        };
+
+        android_functions_layer {
+            #define AK13  &hm  LCMD   F5
+            #define AK14  &hm  LCTRL  F6
+            #define AK15  &hm  LALT   F7
+            #define AK16  &hm  LSHFT  F8
+
+            #define AK19  &hm  RSHFT  HOME
+            #define AK20  &hm  RALT   PG_DN
+            #define AK21  &hm  RCTRL  END
+            #define AK22  &kp RCMD
+
+            #define AK38  &to_aBAS
+            #define AK39  &to_aAXN
+
+            display-name = "aFNK";
+            bindings = <
+    AKY_ESC  &kp F9  &kp F10  &kp F11  &kp F12  &none                  &none    &none  &kp PG_UP  &none  &none   NAV_DEL
+     &mp_bc    AK13     AK14     AK15     AK16  &none                  &none     AK19       AK20   AK21   AK22  NAV_BSPC
+    AKY_TAB  &kp F1   &kp F2   &kp F3   &kp F4  &none                  &none    &none      &none  &none  &none     &none
+                               &mp_cs  KEY_SPC   AK38                   AK39  AKY_RET     &mp_dc
+            >;
+        };
+
+        android_settings_layer {
+            #define ASLU0  MKY_ESC
+            #define ASLU1  &m_s_b1
+            #define ASLU2  &m_s_b2
+            #define ASLU3  &none
+            #define ASLU4  &kp LG(B)            // tap: browser
+            #define ASLU5  &kp LCMD             // tap: assist
+
+            #define ASLM0  &none
+            #define ASLM1  &m_s_b3
+            #define ASLM2  &m_s_b4
+            #define ASLM3  &none
+            #define ASLM4  &kp LG(L)            // tap: calendar
+            #define ASLM5  &kp LG(P)            // tap: music
+
+            #define ASLD0  &mp_sSTG_cb          // tap: none | shift: clear current profile | alt: clear all profiles
+            #define ASLD1  &m_s_b5
+            #define ASLD2  &m_s_b6
+            #define ASLD3  &none
+            #define ASLD4  &kp LG(E)            // tap: mail
+            #define ASLD5  &kp LG(C)            // tap: contacts
+
+
+            #define ASRU0  &kp C_VOL_UP
+            #define ASRU1  &none
+            #define ASRU2  &none
+            #define ASRU3  &none
+            #define ASRU4  &kp LG(N)            // tap: notifications
+            #define ASRU5  &m_as_a              // tap: apps
+
+            #define ASRM0  &kp C_MUTE
+            #define ASRM1  &hm RSHFT  C_PREV    // tap: previous
+            #define ASRM2  &hm LALT   C_PP      // tap: play/pause
+            #define ASRM3  &kp C_NEXT           // tap: next
+            #define ASRM4  &kp LG(RET)          // tap: home
+            #define ASRM5  &kp LG(FSLH)         // tap: keyboard shortcuts
+
+            #define ASRD0  &kp C_VOL_DN
+            #define ASRD1  &none
+            #define ASRD2  &none
+            #define ASRD3  &none
+            #define ASRD4  &none
+            #define ASRD5  &none
+
+
+            #define ASLT2  &kp C_BRI_DN
+            #define ASLT1  KEY_SPC
+            #define ASLT0  &to_aBAS
+
+            #define ASRT0  &to_aAXN
+            #define ASRT1  MKY_RET
+            #define ASRT2  &kp C_BRI_UP
+
+
+            display-name = "mSTG";
+            bindings = <
+              ASLU0  ASLU1  ASLU2  ASLU3  ASLU4  ASLU5    ASRU0  ASRU1  ASRU2  ASRU3  ASRU4  ASRU5
+              ASLM0  ASLM1  ASLM2  ASLM3  ASLM4  ASLM5    ASRM0  ASRM1  ASRM2  ASRM3  ASRM4  ASRM5
+              ASLD0  ASLD1  ASLD2  ASLD3  ASLD4  ASLD5    ASRD0  ASRD1  ASRD2  ASRD3  ASRD4  ASRD5
+                                   ASLT2  ASLT1  ASLT0    ASRT0  ASRT1  ASRT2
+            >;
+        };
+

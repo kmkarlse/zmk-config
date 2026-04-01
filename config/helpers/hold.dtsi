@@ -1,0 +1,25 @@
+/*
+*
+* Copyright (c) 2023 Camilo Martinez (Equiman)
+* SPDX-License-Identifier: MIT
+*
+*/
+
+#define MOTO_HOLD(OS, MO, CB, TO)                                             \
+  mo_##OS##MO##OS##CB##_to_##OS##TO: hold_mo_##OS##MO##OS##CB##_to_##OS##TO { \
+      compatible = "zmk,behavior-hold-tap";                                   \
+      #binding-cells = <2>;                                                   \
+      tapping-term-ms = <HP_TAPPING>;                                         \
+      flavor = "hold-preferred";                                              \
+      bindings = <&mo_##OS##MO##_to_##OS##CB>, <&to_##OS##TO>;                \
+  };
+
+#define HR_HOLD(OS, LYR, MOD, MP)                   \
+  hm_##OS##LYR##_##MOD: hold_hm_##OS##LYR##_##MOD { \
+      compatible = "zmk,behavior-hold-tap";         \
+      #binding-cells = <2>;                         \
+      tapping-term-ms = <HR_TAPPING>;               \
+      quick-tap-ms = <HR_QUICK_TAP>;                \
+      flavor = HR_FLAVOR;                           \
+      bindings = <&kp>, <&MP>;                      \
+  };

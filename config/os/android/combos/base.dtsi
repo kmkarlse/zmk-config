@@ -1,0 +1,13 @@
+combo_aCW_on {
+    bindings = <&cw_aON>;
+    key-positions = <16 19>;
+    slow-release;
+    layers = <aBAS>;
+};
+
+combo_aCW_off {
+    bindings = <&cw_aOFF>;
+    key-positions = <14 21>;
+    slow-release;
+    layers = <aBAS>;
+};

@@ -1,0 +1,74 @@
+/*
+*
+* Copyright (c) 2023 Camilo Martinez (Equiman)
+* SPDX-License-Identifier: MIT
+*
+*/
+
+#define MORPH_KASAS(OS, LYR, NAME, DESC, MODS, KEY, KA, KS, KAS)                \
+    mp_##OS##LYR##_##NAME##_as: morph_##OS##LYR##_##DESC##_alt_shift {          \
+        compatible = "zmk,behavior-mod-morph";                                  \
+        #binding-cells = <0>;                                                   \
+        mods = <(MODS)>;                                                        \
+        bindings = <KS>, <KAS>;                                                 \
+        keep-mods = <(MOD_LALT)>;                                               \
+    };                                                                          \
+    mp_##OS##LYR##_##NAME##_a: morph_##OS##LYR##_##DESC##_alt {                 \
+        compatible = "zmk,behavior-mod-morph";                                  \
+        #binding-cells = <0>;                                                   \
+        mods = <(MODS)>;                                                        \
+        bindings = <KEY>, <KA>;                                                 \
+        keep-mods = <(MOD_LALT)>;                                               \
+    };                                                                          \
+    mp_##OS##LYR##_##NAME: morph_##OS##LYR##_##DESC {                           \
+        compatible = "zmk,behavior-mod-morph";                                  \
+        #binding-cells = <0>;                                                   \
+        mods = <(MOD_LSFT|MOD_RSFT)>;                                           \
+        bindings = <&mp_##OS##LYR##_##NAME##_a>, <&mp_##OS##LYR##_##NAME##_as>; \
+    };
+
+#define MORPH_KSA(OS, LYR, NAME, DESC, MODS, KEY, KS, KA)       \
+    mp_##OS##LYR##_##NAME##_a: morph_##OS##LYR##_##DESC##_alt { \
+        compatible = "zmk,behavior-mod-morph";                  \
+        #binding-cells = <0>;                                   \
+        mods = <(MODS)>;                                        \
+        bindings = <KEY>, <KA>;                                 \
+        keep-mods = <(MOD_LALT)>;                               \
+    };                                                          \
+    mp_##OS##LYR##_##NAME: morph_##OS##LYR##_##DESC {           \
+        compatible = "zmk,behavior-mod-morph";                  \
+        #binding-cells = <0>;                                   \
+        mods = <(MOD_LSFT|MOD_RSFT)>;                           \
+        bindings = <&mp_##OS##LYR##_##NAME##_a>, <KS>;          \
+    };
+
+#define MORPH_KAS(OS, LYR, NAME, DESC, MODS, KEY, KA, KS)         \
+    mp_##OS##LYR##_##NAME##_s: morph_##OS##LYR##_##DESC##_shift { \
+        compatible = "zmk,behavior-mod-morph";                    \
+        #binding-cells = <0>;                                     \
+        mods = <(MOD_LSFT|MOD_RSFT)>;                             \
+        bindings = <KEY>, <KS>;                                   \
+    };                                                            \
+    mp_##OS##LYR##_##NAME: morph_##OS##LYR##_##DESC {             \
+        compatible = "zmk,behavior-mod-morph";                    \
+        #binding-cells = <0>;                                     \
+        mods = <(MODS)>;                                          \
+        bindings = <&mp_##OS##LYR##_##NAME##_s>, <KA>;            \
+    };
+
+#define MORPH_KA(OS, LYR, NAME, DESC, MODS, KEY, KA)    \
+    mp_##OS##LYR##_##NAME: morph_##OS##LYR##_##DESC {   \
+        compatible = "zmk,behavior-mod-morph";          \
+        #binding-cells = <0>;                           \
+        mods = <(MODS)>;                                \
+        bindings = <KEY>, <KA>;                         \
+        keep-mods = <(MOD_LALT)>;                       \
+    };
+
+#define MORPH_KS(OS, LYR, NAME, DESC, KEY, KS)          \
+    mp_##OS##LYR##_##NAME: morph_##OS##LYR##_##DESC {    \
+        compatible = "zmk,behavior-mod-morph";          \
+        #binding-cells = <0>;                           \
+        mods = <(MOD_LSFT|MOD_RSFT)>;                   \
+        bindings = <KEY>, <KS>;                         \
+    };

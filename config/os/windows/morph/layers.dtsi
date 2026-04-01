@@ -1,0 +1,13 @@
+mp_w_stg: morph_windows_stg_layer {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <&mo_wSTG_to_wBAS>, <&to_wSTG>;
+};
+
+mp_w_dev: morph_windows_dev_layer {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <&mo_wDEV_to_wBAS>, <&to_wDEV>;
+};
