@@ -1,4 +1,4 @@
-&spi3 {
+&spi1 {
     compatible = "nordic,nrf-spim";
     status = "okay";
     mosi-pin = <6>;
