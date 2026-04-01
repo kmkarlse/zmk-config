@@ -19,7 +19,7 @@
 #
 ---
 include:
-  - board: mikoto@5.20
+  - board: nice_nano_v2
     shield: corne_left
-  - board: mikoto@5.20
+  - board: nice_nano_v2
     shield: corne_right
