@@ -12,6 +12,7 @@
         spi-one-frame = <0x70>;
         spi-zero-frame = <0x40>;
         color-mapping = <0 1 2>;
+
     };
 };
 
