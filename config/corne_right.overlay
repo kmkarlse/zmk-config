@@ -16,6 +16,7 @@
 };
 
 &spi3 {
+    compatible = "nordic,nrf-spim";
     status = "okay";
     pinctrl-0 = <&spi3_default>;
     pinctrl-1 = <&spi3_sleep>;
