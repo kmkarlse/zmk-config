@@ -54,6 +54,7 @@
     behaviors {
         #include "os/shared/morph/shared.dtsi"
         #include "os/shared/morph/num.dtsi"
+        #include "os/shared/morph/nordic.dtsi"
         #include "os/shared/hold/shared.dtsi"
 
         #include "os/macos/morph/layers.dtsi"

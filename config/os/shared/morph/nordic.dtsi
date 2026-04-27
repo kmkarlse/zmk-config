@@ -1,0 +1,35 @@
+/*
+ * Nordic (Norwegian) mod-morphs.
+ *
+ * These wrap the US scancodes that, on a Norwegian OS layout, produce æ ø å.
+ * Tap = lowercase, Shift+tap = uppercase. Wrapping them as named behaviors
+ * lets ZMK Studio display them as Æ / Ø / Å in the key picker, instead of
+ * the underlying US glyphs (' ; [).
+ */
+
+// tap: æ   shift: Æ
+mp_no_ae: morph_nordic_ae {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    display-name = "Æ";
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <&kp SQT>, <&kp LS(SQT)>;
+};
+
+// tap: ø   shift: Ø
+mp_no_oe: morph_nordic_oe {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    display-name = "Ø";
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <&kp SEMI>, <&kp LS(SEMI)>;
+};
+
+// tap: å   shift: Å
+mp_no_aa: morph_nordic_aa {
+    compatible = "zmk,behavior-mod-morph";
+    #binding-cells = <0>;
+    display-name = "Å";
+    mods = <(MOD_LSFT|MOD_RSFT)>;
+    bindings = <&kp LBKT>, <&kp LS(LBKT)>;
+};
