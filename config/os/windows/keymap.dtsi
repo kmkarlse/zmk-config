@@ -130,7 +130,7 @@
 
             display-name = "wSTG";
             bindings = <
-       WKY_ESC  &m_s_b1  &m_s_b2  &none     WS04      WS05                   WS07  &kp C_VOL_DN    &kp C_MUTE  &kp C_VOL_UP  WS10   WS11
+       WKY_ESC  &m_s_b1  &m_s_b2  &studio_unlock     WS04      WS05                   WS07  &kp C_VOL_DN    &kp C_MUTE  &kp C_VOL_UP  WS10   WS11
           WS12  &m_s_b3  &m_s_b4  &none     WS16      WS17                   WS18          WS19          WS20     &kp C_NEXT  WS22   WS23
           WS24  &m_s_b5  &m_s_b6  &none     WS28      WS29                   WS30         &none         &none         &none  WS34  &none
                            &kp C_BRI_DN  KEY_SPC  &to_wBAS               &to_wAXN       WKY_RET  &kp C_BRI_UP

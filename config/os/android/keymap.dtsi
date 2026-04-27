@@ -109,7 +109,7 @@
             #define ASLU0  MKY_ESC
             #define ASLU1  &m_s_b1
             #define ASLU2  &m_s_b2
-            #define ASLU3  &none
+            #define ASLU3  &studio_unlock
             #define ASLU4  &kp LG(B)            // tap: browser
             #define ASLU5  &kp LCMD             // tap: assist
 

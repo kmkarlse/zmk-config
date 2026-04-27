@@ -109,7 +109,7 @@
             #define MSLU0  MKY_ESC
             #define MSLU1  &m_s_b1
             #define MSLU2  &m_s_b2
-            #define MSLU3  &none
+            #define MSLU3  &studio_unlock
             #define MSLU4  &kp LG(LS(C))                // tap: color picker
             #define MSLU5  &kp RG(PLUS)                 // tap: zoom in
 
