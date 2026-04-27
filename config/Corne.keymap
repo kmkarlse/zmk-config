@@ -20,6 +20,7 @@
 
 /* Keys */
 #include "os/shared/keys.dtsi"
+#include "os/shared/nordic.dtsi"
 #include "os/macos/keys.dtsi"
 #include "os/windows/keys.dtsi"
 #include "os/android/keys.dtsi"

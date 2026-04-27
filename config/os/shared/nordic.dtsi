@@ -1,0 +1,14 @@
+/*
+ * Nordic (Norwegian) characters.
+ *
+ * These keycodes assume the host OS keyboard layout is set to Norwegian (Norsk).
+ * On a Norwegian layout, the physical positions of the US `;` `'` `[` keys
+ * produce ø æ å respectively, so we just alias the US scancodes.
+ *
+ * Usage in a keymap binding: &kp NO_AE   &kp NO_OE   &kp NO_AA
+ * Shifted variants: &kp LS(NO_AE)  etc.
+ */
+
+#define NO_AE  SQT     // æ  (US ')
+#define NO_OE  SEMI    // ø  (US ;)
+#define NO_AA  LBKT    // å  (US [)

@@ -1,0 +1,14 @@
+file_format: "1"
+id: corne
+name: CORNE
+type: shield
+url: https://PandaKB.com
+requires: [Nice!Nano]
+exposes: [i2c_oled]
+features:
+  - keys
+  - display
+  - underglow
+siblings:
+  - Corne_L
+  - Corne_R
