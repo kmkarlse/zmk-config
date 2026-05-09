@@ -46,5 +46,17 @@
                                      &trans        &trans        &trans              &trans      &trans     &trans
             >;
         };
+
+        num_layer {
+            display-name = "NUM";
+            // Placeholder layer — fill in bindings later. Bind &mo 2 somewhere
+            // to activate it (e.g., replace one of the &mo 1 thumb keys).
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans       &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans       &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans       &trans  &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans  &trans       &trans  &trans  &trans
+            >;
+        };
     };
 };

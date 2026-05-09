@@ -11,6 +11,8 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 static const struct zmk_led_hsb layer_colors[] = {
     { .h = 182, .s = 73,  .b = 96 },  /* 0 BASE = cyan (RGB 66,239,245) */
     { .h = 120, .s = 100, .b = 60 },  /* 1 SYM  = green */
+    { .h =   0, .s = 100, .b = 60 },  /* 2 NUM  = red */
+    /* Add more entries here as you add layers. Index = layer number. */
 };
 
 static int layer_color_listener(const zmk_event_t *eh) {
