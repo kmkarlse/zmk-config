@@ -1,4 +1,6 @@
 #include <zephyr/kernel.h>
+#include <zephyr/init.h>
+#include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 
 #include <zmk/event_manager.h>
@@ -37,9 +39,10 @@ static void layer_color_init_work_handler(struct k_work *work) {
 }
 K_WORK_DELAYABLE_DEFINE(layer_color_init_work, layer_color_init_work_handler);
 
-static int layer_color_init(void) {
+static int layer_color_init(const struct device *dev) {
+    ARG_UNUSED(dev);
     /* Delay so rgb_underglow has finished its own init + settings load */
     k_work_schedule(&layer_color_init_work, K_MSEC(1000));
     return 0;
 }
-SYS_INIT(layer_color_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(layer_color_init, APPLICATION, 90);
