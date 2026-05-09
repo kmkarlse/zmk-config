@@ -1,1 +1,5 @@
-target_sources_ifdef(CONFIG_ZMK_RGB_UNDERGLOW app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/layer_color.c)
+if(CONFIG_ZMK_RGB_UNDERGLOW)
+    if(CONFIG_ZMK_SPLIT_ROLE_CENTRAL OR NOT CONFIG_ZMK_SPLIT)
+        target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/layer_color.c)
+    endif()
+endif()
