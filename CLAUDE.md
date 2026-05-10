@@ -40,7 +40,9 @@ Verified by user via multimeter: continuity from first underglow LED's DIN ↔ D
 
 Boot init at SYS_INIT(APPLICATION, 90) schedules a delayed work 1s after boot to apply BASE color (otherwise RGB stays at ZMK default until first layer event).
 
-`CMakeLists.txt` gates compilation on `CONFIG_ZMK_RGB_UNDERGLOW AND (CONFIG_ZMK_SPLIT_ROLE_CENTRAL OR NOT CONFIG_ZMK_SPLIT)` — central only. Tried compiling on both halves; failed at link with `undefined reference to zmk_keymap_highest_layer_active` and `zmk_event_zmk_layer_state_changed`. Per `zmk/app/CMakeLists.txt:47`, ZMK gates `keymap.c` and `events/layer_state_changed.c` on `(NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL`, so peripheral simply doesn't have those symbols. **Right half stays at its local default RGB (red).** To unify halves would require sending a custom split BLE event from central → peripheral carrying the HSB.
+`CMakeLists.txt` gates compilation on `CONFIG_ZMK_RGB_UNDERGLOW AND (CONFIG_ZMK_SPLIT_ROLE_CENTRAL OR NOT CONFIG_ZMK_SPLIT)` — central only. Per `zmk/app/CMakeLists.txt:47`, ZMK gates `keymap.c` and `events/layer_state_changed.c` on central, so peripheral has no `zmk_keymap_highest_layer_active` or layer state event symbols.
+
+To sync the color to the peripheral, `layer_color.c` calls `zmk_behavior_invoke_binding()` with `behavior_dev = "rgb_ug"` instead of calling `zmk_rgb_underglow_set_hsb()` directly. The `rgb_ug` behavior is declared `BEHAVIOR_LOCALITY_GLOBAL` in ZMK, so its invocation auto-propagates to every peripheral over split BLE. Two invocations per layer change: `RGB_EFS_CMD` (solid effect) then `RGB_COLOR_HSB_CMD` with packed HSB (codes from `<dt-bindings/zmk/rgb.h>`). Boot init delay 3s so first broadcast lands after peripheral connects.
 
 ## OLED status screens
 
