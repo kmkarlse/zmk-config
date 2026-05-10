@@ -42,6 +42,13 @@ Boot init at SYS_INIT(APPLICATION, 90) schedules a delayed work 1s after boot to
 
 `CMakeLists.txt` in shield folder gates compilation on `CONFIG_ZMK_RGB_UNDERGLOW`. Compiles on **both halves** — ZMK propagates layer state over split BLE, so `zmk_layer_state_changed` fires on the peripheral too and `zmk_keymap_highest_layer_active()` is unconditional in v0.3. Each half reacts independently and sets its own underglow.
 
+## OLED status screens
+
+- **Left (central):** ZMK's default built-in status screen — layer + output widgets (battery widget disabled).
+- **Right (peripheral):** custom bongo cat screen, full 128x32. Set up via `CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM=y` in `Corne_R.conf` so ZMK skips its built-in `status_screen.c` and our `custom_status_screen.c` provides `zmk_display_status_screen()`.
+- **Bongo cat widget** in `boards/shields/Corne/widgets/`: bitmap data (5 idle + 2 tap frames, 1-bit indexed) in `bongo_cat_images.c`, animation logic in `bongo_cat.c`. Subscribes to `zmk_position_state_changed` (not keycode) so it works on peripheral. Animates on right-hand keypresses; left-hand keypresses don't propagate to peripheral so cat stays idle for those.
+- `CMakeLists.txt` gates bongo cat sources on `CONFIG_ZMK_DISPLAY AND CONFIG_ZMK_SPLIT AND NOT CONFIG_ZMK_SPLIT_ROLE_CENTRAL` — built only for peripheral.
+
 ## Open / TODO
 
 - User had ~4 LEDs working last we synced; was working through chain to fix bad solder joints.
