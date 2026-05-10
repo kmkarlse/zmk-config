@@ -40,11 +40,7 @@ Verified by user via multimeter: continuity from first underglow LED's DIN ↔ D
 
 Boot init at SYS_INIT(APPLICATION, 90) schedules a delayed work 1s after boot to apply BASE color (otherwise RGB stays at ZMK default until first layer event).
 
-`CMakeLists.txt` in shield folder gates compilation: `CONFIG_ZMK_RGB_UNDERGLOW AND (CONFIG_ZMK_SPLIT_ROLE_CENTRAL OR NOT CONFIG_ZMK_SPLIT)`. Peripheral can't have layer code (no `zmk_keymap_highest_layer_active`).
-
-## Split RGB sync (NOT enabled)
-
-Right half (peripheral) shows **stable default red** because RGB state isn't synced from central. Layer-color logic only runs on central. To unify halves, would need RGB split state sync (varies by ZMK version) or manual `&rgb_ug` macros.
+`CMakeLists.txt` in shield folder gates compilation on `CONFIG_ZMK_RGB_UNDERGLOW`. Compiles on **both halves** — ZMK propagates layer state over split BLE, so `zmk_layer_state_changed` fires on the peripheral too and `zmk_keymap_highest_layer_active()` is unconditional in v0.3. Each half reacts independently and sets its own underglow.
 
 ## Open / TODO
 
