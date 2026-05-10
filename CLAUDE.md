@@ -40,7 +40,7 @@ Verified by user via multimeter: continuity from first underglow LED's DIN ↔ D
 
 Boot init at SYS_INIT(APPLICATION, 90) schedules a delayed work 1s after boot to apply BASE color (otherwise RGB stays at ZMK default until first layer event).
 
-`CMakeLists.txt` in shield folder gates compilation on `CONFIG_ZMK_RGB_UNDERGLOW`. Compiles on **both halves** — ZMK propagates layer state over split BLE, so `zmk_layer_state_changed` fires on the peripheral too and `zmk_keymap_highest_layer_active()` is unconditional in v0.3. Each half reacts independently and sets its own underglow.
+`CMakeLists.txt` gates compilation on `CONFIG_ZMK_RGB_UNDERGLOW AND (CONFIG_ZMK_SPLIT_ROLE_CENTRAL OR NOT CONFIG_ZMK_SPLIT)` — central only. Tried compiling on both halves; failed at link with `undefined reference to zmk_keymap_highest_layer_active` and `zmk_event_zmk_layer_state_changed`. Per `zmk/app/CMakeLists.txt:47`, ZMK gates `keymap.c` and `events/layer_state_changed.c` on `(NOT CONFIG_ZMK_SPLIT) OR CONFIG_ZMK_SPLIT_ROLE_CENTRAL`, so peripheral simply doesn't have those symbols. **Right half stays at its local default RGB (red).** To unify halves would require sending a custom split BLE event from central → peripheral carrying the HSB.
 
 ## OLED status screens
 
