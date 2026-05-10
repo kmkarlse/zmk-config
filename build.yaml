@@ -2,9 +2,9 @@
 ---
 include:
   - board: nice_nano_v2
-    shield: Corne_L
+    shield: Corne_L nice_oled
     snippet: studio-rpc-usb-uart
   - board: nice_nano_v2
-    shield: Corne_R
+    shield: Corne_R nice_oled
   - board: nice_nano_v2
     shield: settings_reset
