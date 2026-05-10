@@ -9,7 +9,6 @@ if(CONFIG_ZMK_RGB_UNDERGLOW)
 endif()
 
 # Bongo cat status screen — peripheral half only.
-# Central keeps the default ZMK status screen (layer + output widgets).
 if(CONFIG_ZMK_DISPLAY AND CONFIG_ZMK_SPLIT AND NOT CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     target_sources(app PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/custom_status_screen.c
@@ -17,4 +16,9 @@ if(CONFIG_ZMK_DISPLAY AND CONFIG_ZMK_SPLIT AND NOT CONFIG_ZMK_SPLIT_ROLE_CENTRAL
         ${CMAKE_CURRENT_SOURCE_DIR}/widgets/bongo_cat_images.c
     )
     target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
+
+# Central status screen — central half only.
+if(CONFIG_ZMK_DISPLAY AND (CONFIG_ZMK_SPLIT_ROLE_CENTRAL OR NOT CONFIG_ZMK_SPLIT))
+    target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/central_status_screen.c)
 endif()
