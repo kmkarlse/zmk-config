@@ -1,3 +1,6 @@
 build:
   settings:
     board_root: .
+    # Ship our custom DT bindings (dts/bindings/behaviors/...) so they
+    # get picked up by gen_defines.py during Zephyr's DT phase.
+    dts_root: .

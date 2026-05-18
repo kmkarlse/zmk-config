@@ -28,22 +28,63 @@ Verified by user via multimeter: continuity from first underglow LED's DIN ↔ D
 - LED diode test (red on GND, black on VDD reads ~0.4V one direction, OL the other = chip alive).
 - Reverse-mount in-switch SK6812 pinout: chamfer = pin 1 = VDD; opposite chamfer = pin 4 = DIN; counter-clockwise from chamfer.
 
-## Layer colors (custom C)
+## RGB (custom controller — replaces ZMK's rgb_underglow)
 
-`boards/shields/Corne/layer_color.c` — listens to `zmk_layer_state_changed` and `zmk_activity_state_changed`. On layer change while active, sets RGB to solid + per-layer HSB. On activity IDLE/SLEEP, switches to the `IDLE_EFFECT` animation (default index 3 = swirl). On ACTIVE, reapplies the solid layer color. Layer events fired during idle are intentionally ignored so they don't kick the animation back to solid.
+ZMK's built-in `rgb_underglow.c` is **disabled** on this shield (`CONFIG_ZMK_RGB_UNDERGLOW=n` in both `Corne_{L,R}.conf`). It owns the pixel buffer and re-renders the strip every 50ms regardless of effect, which makes layering per-key flash writes on top impossible. We replace it with a custom controller that runs on both halves.
+
+### Files
+
+- **`rgb_reactive.c`** — strip controller. Owns `led_strip`, ticks at 50ms, composites a base layer color + flash overlays in ACTIVE mode and a swirl in IDLE mode. Public API: `rgb_reactive_set_layer/_set_mode/_flash`. Compiles on both halves.
+- **`behavior_rgb_reactive.c`** — global-locality behavior shim. Decodes `(param1=cmd, param2=arg)` and calls into the controller. `compatible = "zmk,behavior-rgb-reactive"`, binding at `dts/bindings/behaviors/`. The behavior is invoked programmatically only, never bound in the keymap.
+- **`layer_color.c`** — central-side coordinator. Subscribes to `zmk_layer_state_changed`, `zmk_activity_state_changed`, `zmk_position_state_changed` (all central-only in ZMK) and invokes the global behavior so commands auto-propagate to peripheral over split BLE.
+- **`rgb_reactive.h`** — protocol constants (`RGB_RX_CMD_*`, `RGB_RX_MODE_*`, `RGB_RX_FLASH_*`).
+
+### Behavior protocol (param1, param2)
+
+| Command (param1) | param2 | Effect |
+|---|---|---|
+| `RGB_RX_CMD_SET_LAYER` (0) | layer index 0..3 | Each half sets resting color to `layer_colors[layer]` |
+| `RGB_RX_CMD_SET_MODE` (1) | `RGB_RX_MODE_ACTIVE`/`_IDLE` | Each half switches between layer-color and swirl |
+| `RGB_RX_CMD_FLASH` (2) | `RGB_RX_FLASH_PACK(half, chain_led)` | Half ignores if `half` ≠ its compiled role; else adds a 300ms additive overlay on that chain index |
+
+Per-key reactive flashes are gated to **BASE layer + ACTIVE only** in `layer_color.c::position_listener` to keep BLE traffic down.
+
+### Position → LED mapping
+
+`layer_color.c::resolve_position` maps the 0..41 global position into `(half, chain_led)`. Half is determined from the column range (cols 0..5 = central / left, 6..11 = peripheral / right). The local 0..20 index inside a half goes through the `LOCAL_TO_CHAIN[]` table which currently assumes simple monotonic chain order (LEDs 6..26 in row-major from top-left). If lit LEDs don't match the pressed key, edit that table — the chain routing on PandaKB Corne v3 MX is not documented.
+
+### Layer colors
 
 | Layer | Name | Color | HSB |
 |---|---|---|---|
-| 0 | BASE | cyan (RGB 66,239,245) | 182, 73, 96 |
+| 0 | BASE | cyan (reactive) | 182, 73, 60 |
 | 1 | SYM  | green | 120, 100, 60 |
 | 2 | NUM  | red (placeholder bindings) | 0, 100, 60 |
 | 3 | L3   | orange (placeholder bindings) | 30, 100, 60 |
 
-Boot init at SYS_INIT(APPLICATION, 90) schedules a delayed work 1s after boot to apply BASE color (otherwise RGB stays at ZMK default until first layer event).
+Brightness V is fixed at 60 (≈24%) across all layers; was previously controlled by `CONFIG_ZMK_RGB_UNDERGLOW_BRT_START`. Edit the `BASE_BRIGHTNESS` macro in `rgb_reactive.c` to change.
 
-`CMakeLists.txt` gates compilation on `CONFIG_ZMK_RGB_UNDERGLOW AND (CONFIG_ZMK_SPLIT_ROLE_CENTRAL OR NOT CONFIG_ZMK_SPLIT)` — central only. Per `zmk/app/CMakeLists.txt:47`, ZMK gates `keymap.c` and `events/layer_state_changed.c` on central, so peripheral has no `zmk_keymap_highest_layer_active` or layer state event symbols.
+### Build gates / boot
 
-To sync the color to the peripheral, `layer_color.c` calls `zmk_behavior_invoke_binding()` with `behavior_dev = "rgb_ug"` instead of calling `zmk_rgb_underglow_set_hsb()` directly. The `rgb_ug` behavior is declared `BEHAVIOR_LOCALITY_GLOBAL` in ZMK, so its invocation auto-propagates to every peripheral over split BLE. Two invocations per layer change: `RGB_EFS_CMD` (solid effect) then `RGB_COLOR_HSB_CMD` with packed HSB (codes from `<dt-bindings/zmk/rgb.h>`). Boot init delay 3s so first broadcast lands after peripheral connects.
+`CMakeLists.txt` gates the controller + behavior on `CONFIG_WS2812_STRIP` (both halves). `layer_color.c` is additionally gated on central. Per `zmk/app/CMakeLists.txt:47`, ZMK gates `keymap.c`, `events/layer_state_changed.c`, and `events/position_state_changed.c` on central, so peripheral has no layer/position symbols — that's why the coordinator is central-only.
+
+Controller init runs at `SYS_INIT(APPLICATION, 90)` and starts ticking 500ms after boot. The central coordinator broadcasts initial `SET_MODE=ACTIVE` + `SET_LAYER=current` 3s after boot so the first broadcast lands after the peripheral split connection is up (global behavior invocations only reach already-connected peripherals).
+
+### DT wiring
+
+Custom DT binding lives at `dts/bindings/behaviors/zmk,behavior-rgb-reactive.yaml` (repo-root location, picked up via `zephyr/module.yml`'s `dts_root: .`). The behavior node is declared in `Corne.dtsi`:
+
+```
+behaviors {
+    rgb_reactive: behavior_rgb_reactive {
+        compatible = "zmk,behavior-rgb-reactive";
+        #binding-cells = <2>;
+        display-name = "RGB Reactive";
+    };
+};
+```
+
+Behavior dev name (`"rgb_reactive"`) is derived from the DT alias label — same convention upstream uses for `rgb_ug`.
 
 ## OLED status screens
 
@@ -58,8 +99,9 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 
 - User had ~4 LEDs working last we synced; was working through chain to fix bad solder joints.
 - NUM layer (index 2) defined in keymap with `&trans` placeholders. No key bound to `&mo 2` yet — user must add activation.
-- `BRT_START=60` (24% brightness). Low enough to stay within battery's 1C rating when batteries arrive.
+- `BASE_BRIGHTNESS=60` in `rgb_reactive.c` (≈24% V). Low enough to stay within battery's 1C rating when batteries arrive.
 - `CONFIG_BT_CTLR_TX_PWR_PLUS_8=y` → high BLE power, drains battery faster. User may want to drop for runtime.
+- `LOCAL_TO_CHAIN[]` in `layer_color.c` is a row-major guess; verify against actual chain routing when more LEDs come online.
 
 ## Build / flash
 

@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: MIT
+
+description: |
+  Custom RGB controller behavior for PandaKB Corne v3 MX.
+  param1 is a command code (see rgb_reactive.h: RGB_RX_CMD_*).
+  param2 is command-specific (layer index, packed flash payload, etc.).
+  Locality is GLOBAL so invocations on central auto-propagate to peripherals.
+
+compatible: "zmk,behavior-rgb-reactive"
+
+include: two_param.yaml
