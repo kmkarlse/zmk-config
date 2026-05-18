@@ -20,14 +20,6 @@
         // Tap = /, hold 1s = toggle target layer.
         // On layer 3 the same position is &trans, so it falls through to
         // this binding on BASE — another 1s hold toggles layer 3 back off.
-
-        fslh_lock: fslh_lock {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            tapping-term-ms = <1000>;
-            flavor = "tap-preferred";
-            bindings = <&tog>, <&kp>;
-        };
     };
 
     keymap {
@@ -36,7 +28,7 @@
         base_layer {
             display-name = "BASE";
             bindings = <
-&kp ESC    &kp Q  &kp W  &kp E     &kp R     &kp T      &kp Y    &kp U  &kp I      &kp O    &kp P      &fslh_lock 3 FSLH
+&kp ESC    &kp Q  &kp W  &kp E     &kp R     &kp T      &kp Y    &kp U  &kp I      &kp O    &kp P      &kp SLASH
 &kp LSHFT  &kp A  &kp S  &kp D     &kp F     &kp G      &kp H    &kp J  &kp K      &kp L    &kp SEMI   &kp SQT
 &kp LCTRL  &kp Z  &kp X  &kp C     &kp V     &kp B      &kp N    &kp M  &kp COMMA  &kp DOT  &kp MINUS  &kp RALT
                          &kp LGUI  &kp BSPC  &kp SPACE  &kp RET  &mo 1  &mo 2
@@ -55,7 +47,7 @@
 &kp F1   &kp F2  &kp F3  &kp F4  &kp F5  &kp F6  &kp F7      &kp F8      &kp F9               &kp F10  &kp F11  &kp F12
 &kp TAB  &trans  &trans  &trans  &trans  &trans  &kp RA(N7)  &kp RA(N0)  &kp N9               &kp N0   &trans   &trans
 &trans   &trans  &trans  &trans  &trans  &trans  &kp RA(N8)  &kp RA(N9)  &kp RA(NON_US_BSLH)  &trans   &trans   &trans
-                         &trans  &trans  &trans  &trans      &trans      &trans
+                         &trans  &trans  &sl 3   &trans      &trans      &trans
             >;
         };
 
