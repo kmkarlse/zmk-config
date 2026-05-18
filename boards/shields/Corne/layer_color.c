@@ -89,14 +89,13 @@ static void invoke(uint32_t cmd, uint32_t arg) {
     }
 }
 
-/* Layer changes. */
+/* Layer changes. Always broadcast the new layer — the controller
+ * tracks layer independently of mode, so a SET_LAYER queued during
+ * IDLE just updates the resting color that will be drawn on the next
+ * ACTIVE transition. (Previously this was gated on zmk_activity_get_state,
+ * but events can race ahead of the activity tracker and get dropped.) */
 static int layer_listener(const zmk_event_t *eh) {
     ARG_UNUSED(eh);
-    if (zmk_activity_get_state() != ZMK_ACTIVITY_ACTIVE) {
-        /* Idle/sleep: don't fight the swirl. The next ACTIVE transition
-         * will reapply the right layer color. */
-        return 0;
-    }
     uint8_t layer = (uint8_t)zmk_keymap_highest_layer_active();
     invoke(RGB_RX_CMD_SET_LAYER, layer);
     return 0;
@@ -119,11 +118,17 @@ static int activity_listener(const zmk_event_t *eh) {
 ZMK_LISTENER(rgb_reactive_activity, activity_listener);
 ZMK_SUBSCRIPTION(rgb_reactive_activity, zmk_activity_state_changed);
 
-/* Key presses → per-key flash, BASE layer only, ACTIVE only. */
+/* Key presses → per-key flash, BASE layer only. We deliberately do
+ * NOT gate on zmk_activity_get_state(): the position event fires
+ * before the activity tracker flips to ACTIVE on wake-from-idle, so
+ * the filter dropped every legitimate keypress. The controller
+ * itself ignores queued flashes while in IDLE mode (its render
+ * function draws the swirl, not flashes), so racing through a stale
+ * IDLE state is harmless — by the time the next render runs the
+ * mode change has already arrived. */
 static int position_listener(const zmk_event_t *eh) {
     const struct zmk_position_state_changed *ev = as_zmk_position_state_changed(eh);
-    if (ev == NULL || !ev->state) return 0;       /* press transitions only */
-    if (zmk_activity_get_state() != ZMK_ACTIVITY_ACTIVE) return 0;
+    if (ev == NULL || !ev->state) return 0;
     if (zmk_keymap_highest_layer_active() != 0) return 0;   /* BASE only */
 
     uint8_t half, chain_led;

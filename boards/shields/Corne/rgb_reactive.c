@@ -23,7 +23,9 @@ LOG_MODULE_REGISTER(rgb_reactive, CONFIG_ZMK_LOG_LEVEL);
 #define FLASH_SLOTS       16
 #define FLASH_MAX_ADD     200  /* additive overlay on each channel at t=0 */
 #define BASE_BRIGHTNESS   60   /* % — matches former CONFIG_..._BRT_START=60 */
-#define IDLE_HUE_PERIOD_MS 12000
+/* ZMK's swirl runs at speed*2 hue/tick at 50ms ticks. Default speed=3 →
+ * 6 hue/50ms → 360° in 3000ms. Match that. */
+#define IDLE_HUE_PERIOD_MS 3000
 
 struct layer_color { uint16_t h; uint8_t s; uint8_t b; };
 static const struct layer_color layer_colors[] = {
@@ -86,10 +88,14 @@ static void render(void) {
     uint8_t layer = current_layer;
 
     if (mode == RGB_RX_MODE_IDLE) {
+        /* Match upstream ZMK swirl: keep the current layer's S/V, only
+         * rotate hue. Speed and brightness mirror the rgb_underglow
+         * defaults we used to inherit. */
+        const struct layer_color *lc = &layer_colors[layer % ARRAY_SIZE(layer_colors)];
         uint16_t base_hue = (uint16_t)((now * 360 / IDLE_HUE_PERIOD_MS) % 360);
         for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
             uint16_t h = (base_hue + (i * 360) / STRIP_NUM_PIXELS) % 360;
-            pixels[i] = hsb_to_rgb(h, 100, BASE_BRIGHTNESS);
+            pixels[i] = hsb_to_rgb(h, lc->s, lc->b);
         }
     } else {
         const struct layer_color *lc = &layer_colors[layer % ARRAY_SIZE(layer_colors)];
