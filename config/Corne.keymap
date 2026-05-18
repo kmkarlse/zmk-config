@@ -5,6 +5,7 @@
  * produce ø/æ automatically, so home-row right gives you those for free.
  * Layer 1 (SYM)  — F-row, brackets, digits 9/0, backslash.
  * Layer 2 (NUM)  — number row + inverted-T arrow cluster on right hand.
+ * Layer 3 (L3)   — placeholder, toggled by long-holding / for 2s.
  */
 
 #include <behaviors.dtsi>
@@ -19,13 +20,26 @@
         zmk,physical-layout = &default_layout;
     };
 
+    behaviors {
+        // Tap = /, hold 2s = toggle target layer.
+        // On layer 3 the same position is &trans, so it falls through to
+        // this binding on BASE — another 2s hold toggles layer 3 back off.
+        fslh_lock: fslh_lock {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            tapping-term-ms = <2000>;
+            flavor = "tap-preferred";
+            bindings = <&tog>, <&kp>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
         base_layer {
             display-name = "BASE";
             bindings = <
-&kp ESC    &kp Q  &kp W  &kp E     &kp R     &kp T          &kp Y     &kp U  &kp I      &kp O    &kp P      &kp FSLH
+&kp ESC    &kp Q  &kp W  &kp E     &kp R     &kp T          &kp Y     &kp U  &kp I      &kp O    &kp P      &fslh_lock 3 FSLH
 &kp LSHFT  &kp A  &kp S  &kp D     &kp F     &kp G          &kp H     &kp J  &kp K      &kp L    &kp SEMI   &kp SQT
 &kp LCTRL  &kp Z  &kp X  &kp C     &kp V     &kp B          &kp N     &kp M  &kp COMMA  &kp DOT  &kp MINUS  &kp RALT
                          &kp LGUI  &kp BSPC  &kp SPACE      &kp RET   &mo 1  &mo 2
@@ -55,6 +69,18 @@
 &trans  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5         &kp N6    &kp N7      &kp N8    &kp N9       &kp N0  &trans
 &trans  &trans  &trans  &trans  &trans  &trans         &trans    &trans      &kp UP    &trans       &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans         &trans    &kp LEFT    &kp DOWN  &kp RIGHT    &trans  &trans
+                        &trans  &trans  &trans         &trans    &trans      &trans
+            >;
+        };
+
+        layer_3 {
+            display-name = "L3";
+            // Placeholder. / position is &trans so 2s hold falls through
+            // to BASE's &fslh_lock and toggles this layer back off.
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans         &trans    &trans      &trans    &trans       &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans         &trans    &trans      &trans    &trans       &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans         &trans    &trans      &trans    &trans       &trans  &trans
                         &trans  &trans  &trans         &trans    &trans      &trans
             >;
         };
