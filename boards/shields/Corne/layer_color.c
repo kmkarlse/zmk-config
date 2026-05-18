@@ -5,10 +5,16 @@
 
 #include <dt-bindings/zmk/rgb.h>
 
+#include <zmk/activity.h>
 #include <zmk/behavior.h>
 #include <zmk/event_manager.h>
+#include <zmk/events/activity_state_changed.h>
 #include <zmk/events/layer_state_changed.h>
 #include <zmk/keymap.h>
+
+/* Effect index to play when the keyboard goes idle. Matches the order in
+ * zmk/app/src/rgb_underglow.c: 0=solid, 1=breathe, 2=spectrum, 3=swirl. */
+#define IDLE_EFFECT 3  /* swirl */
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
@@ -60,12 +66,36 @@ static void apply_layer_color(uint8_t layer) {
 
 static int layer_color_listener(const zmk_event_t *eh) {
     ARG_UNUSED(eh);
+    /* Don't fight the idle animation — if we're idle, ignore layer changes
+     * (the upcoming ACTIVE transition will reapply the right color). */
+    if (zmk_activity_get_state() != ZMK_ACTIVITY_ACTIVE) {
+        return 0;
+    }
     apply_layer_color(zmk_keymap_highest_layer_active());
     return 0;
 }
 
 ZMK_LISTENER(layer_color, layer_color_listener);
 ZMK_SUBSCRIPTION(layer_color, zmk_layer_state_changed);
+
+static int activity_listener(const zmk_event_t *eh) {
+    const struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
+    if (ev == NULL) {
+        return 0;
+    }
+    if (ev->state == ZMK_ACTIVITY_ACTIVE) {
+        apply_layer_color(zmk_keymap_highest_layer_active());
+    } else {
+        /* IDLE or SLEEP — kick off the animated effect. Note: with
+         * CONFIG_ZMK_RGB_UNDERGLOW_AUTO_OFF_IDLE=n (default), the strip
+         * stays powered during idle, so the animation actually shows. */
+        invoke_rgb_ug(RGB_EFS_CMD, IDLE_EFFECT);
+    }
+    return 0;
+}
+
+ZMK_LISTENER(layer_color_activity, activity_listener);
+ZMK_SUBSCRIPTION(layer_color_activity, zmk_activity_state_changed);
 
 static void layer_color_init_work_handler(struct k_work *work) {
     ARG_UNUSED(work);
