@@ -17,14 +17,14 @@
     chosen { zmk,physical-layout = &default_layout; };
 
     behaviors {
-        // Tap = /, hold 2s = toggle target layer.
+        // Tap = /, hold 1s = toggle target layer.
         // On layer 3 the same position is &trans, so it falls through to
-        // this binding on BASE — another 2s hold toggles layer 3 back off.
+        // this binding on BASE — another 1s hold toggles layer 3 back off.
 
         fslh_lock: fslh_lock {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
-            tapping-term-ms = <2000>;
+            tapping-term-ms = <1000>;
             flavor = "tap-preferred";
             bindings = <&tog>, <&kp>;
         };
