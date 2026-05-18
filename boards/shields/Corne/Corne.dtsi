@@ -23,6 +23,11 @@
 		rgb_reactive: behavior_rgb_reactive {
 			compatible = "zmk,behavior-rgb-reactive";
 			#binding-cells = <2>;
+			/* Pin the device name so zmk_behavior_invoke_binding
+			 * can find us reliably — without this, the resolved
+			 * name depends on Zephyr's DEVICE_DT_NAME fallback
+			 * (DT_NODE_FULL_NAME), which varies. */
+			label = "rgb_reactive";
 			display-name = "RGB Reactive";
 		};
 	};
