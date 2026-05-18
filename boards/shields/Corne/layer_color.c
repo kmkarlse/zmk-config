@@ -27,7 +27,10 @@
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
-#define BEHAVIOR_NAME "rgb_reactive"
+/* Must match the DT `label` on the rgb_reactive behavior node and
+ * fit within ZMK_SPLIT_RUN_BEHAVIOR_DEV_LEN (9 incl. NUL = 8 chars
+ * max). */
+#define BEHAVIOR_NAME "rgb_rx"
 
 /*
  * Position → (half, local key index) lookup. The Corne keymap matrix

@@ -24,10 +24,13 @@
 			compatible = "zmk,behavior-rgb-reactive";
 			#binding-cells = <2>;
 			/* Pin the device name so zmk_behavior_invoke_binding
-			 * can find us reliably — without this, the resolved
-			 * name depends on Zephyr's DEVICE_DT_NAME fallback
-			 * (DT_NODE_FULL_NAME), which varies. */
-			label = "rgb_reactive";
+			 * can find us reliably. MUST be ≤8 chars: ZMK's split
+			 * BLE service caps behavior_dev at 9 bytes including
+			 * the null terminator (ZMK_SPLIT_RUN_BEHAVIOR_DEV_LEN
+			 * in zmk/split/bluetooth/service.h), so anything
+			 * longer gets truncated on the wire and the peripheral
+			 * lookup misses. */
+			label = "rgb_rx";
 			display-name = "RGB Reactive";
 		};
 	};
