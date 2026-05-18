@@ -28,6 +28,7 @@ static const struct layer_color layer_colors[] = {
     { .h = 182, .s = 73,  .b = 96 },  /* 0 BASE = cyan (RGB 66,239,245) */
     { .h = 120, .s = 100, .b = 60 },  /* 1 SYM  = green */
     { .h =   0, .s = 100, .b = 60 },  /* 2 NUM  = red */
+    { .h =  30, .s = 100, .b = 60 },  /* 3 L3   = orange */
 };
 
 /*

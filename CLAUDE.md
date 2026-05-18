@@ -30,13 +30,14 @@ Verified by user via multimeter: continuity from first underglow LED's DIN ↔ D
 
 ## Layer colors (custom C)
 
-`boards/shields/Corne/layer_color.c` — listens to `zmk_layer_state_changed`, sets RGB HSB based on highest active layer.
+`boards/shields/Corne/layer_color.c` — listens to `zmk_layer_state_changed` and `zmk_activity_state_changed`. On layer change while active, sets RGB to solid + per-layer HSB. On activity IDLE/SLEEP, switches to the `IDLE_EFFECT` animation (default index 3 = swirl). On ACTIVE, reapplies the solid layer color. Layer events fired during idle are intentionally ignored so they don't kick the animation back to solid.
 
 | Layer | Name | Color | HSB |
 |---|---|---|---|
 | 0 | BASE | cyan (RGB 66,239,245) | 182, 73, 96 |
 | 1 | SYM  | green | 120, 100, 60 |
 | 2 | NUM  | red (placeholder bindings) | 0, 100, 60 |
+| 3 | L3   | orange (placeholder bindings) | 30, 100, 60 |
 
 Boot init at SYS_INIT(APPLICATION, 90) schedules a delayed work 1s after boot to apply BASE color (otherwise RGB stays at ZMK default until first layer event).
 
