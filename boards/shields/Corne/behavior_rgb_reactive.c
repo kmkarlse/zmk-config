@@ -3,9 +3,7 @@
  *
  * Declared with locality GLOBAL so any invocation on central is broadcast
  * to every connected peripheral over the split BLE link, and run locally
- * too. The behavior is intentionally not bound in the keymap — it's invoked
- * programmatically from layer_color.c (central) via
- * zmk_behavior_invoke_binding().
+ * too. Invoked programmatically from layer_color.c, not bound in keymap.
  */
 #define DT_DRV_COMPAT zmk_behavior_rgb_reactive
 
@@ -17,31 +15,14 @@
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
-#if IS_ENABLED(CONFIG_ZMK_SPLIT) && !IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
-#define LOCAL_HALF RGB_RX_HALF_PERIPH
-#else
-#define LOCAL_HALF RGB_RX_HALF_CENTRAL
-#endif
-
 static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
                                      struct zmk_behavior_binding_event event) {
-    uint32_t cmd = binding->param1;
-    uint32_t arg = binding->param2;
-
-    switch (cmd) {
+    switch (binding->param1) {
     case RGB_RX_CMD_SET_LAYER:
-        rgb_reactive_set_layer((uint8_t)arg);
-        break;
-    case RGB_RX_CMD_SET_MODE:
-        rgb_reactive_set_mode((uint8_t)arg);
-        break;
-    case RGB_RX_CMD_FLASH:
-        if (RGB_RX_FLASH_HALF(arg) == LOCAL_HALF) {
-            rgb_reactive_flash((uint8_t)RGB_RX_FLASH_LED(arg));
-        }
+        rgb_reactive_set_layer((uint8_t)binding->param2);
         break;
     default:
-        LOG_WRN("unknown rgb_reactive cmd %u", cmd);
+        LOG_WRN("unknown rgb_reactive cmd %u", binding->param1);
         break;
     }
     return 0;
