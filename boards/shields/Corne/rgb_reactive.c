@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(rgb_reactive, CONFIG_ZMK_LOG_LEVEL);
 #define STRIP_NUM_PIXELS  DT_PROP(STRIP_NODE, chain_length)
 
 #define TICK_MS           50
-#define BASE_BRIGHTNESS   60   /* % — matches former CONFIG_..._BRT_START=60 */
+#define BASE_BRIGHTNESS   40   /* HSV V%; ~⅓ less strip current than 60 */
 /* ZMK's swirl runs at speed*2 hue/tick at 50ms ticks. Default speed=3 →
  * 6 hue/50ms → 360° in 3000ms. Match that. */
 #define SWIRL_PERIOD_MS   3000
