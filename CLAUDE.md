@@ -102,7 +102,7 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 
 - NUM layer (index 2) defined in keymap with `&trans` placeholders. No key bound to `&mo 2` yet — user must add activation.
 - `BASE_BRIGHTNESS=40` in `rgb_reactive.c` — that's `v=40` in HSV, so the brightest channel of any pixel tops out at ~40% duty (102/255). Roughly ⅓ less strip current than v=60. Visibly dimmer but still clearly lit on the in-switch SK6812s.
-- `CONFIG_BT_CTLR_TX_PWR_PLUS_8=y` → high BLE power, drains battery faster. User may want to drop for runtime.
+- `CONFIG_BT_CTLR_TX_PWR_0=y` → 0 dBm (1 mW), Zephyr default. Was PandaKB-stock `_PLUS_8=y` (+8 dBm, 6 mW). Revert if L↔R sync gets flaky in your environment.
 
 ## Build / flash
 
