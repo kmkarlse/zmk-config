@@ -6,11 +6,17 @@
  * is solid. Layer state is updated via rgb_reactive_set_layer, called
  * from behavior_rgb_reactive.c on both halves.
  */
+#include <string.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/led_strip.h>
 #include <zephyr/logging/log.h>
+
+#include <zmk/activity.h>
+#include <zmk/event_manager.h>
+#include <zmk/events/activity_state_changed.h>
 
 #include "rgb_reactive.h"
 
@@ -93,14 +99,43 @@ static void render(void) {
     }
 }
 
+static void blank_strip(void) {
+    memset(pixels, 0, sizeof(pixels));
+    int ret = led_strip_update_rgb(led_strip, pixels, STRIP_NUM_PIXELS);
+    if (ret < 0) {
+        LOG_WRN("blank led_strip_update_rgb returned %d", ret);
+    }
+}
+
 static void tick_work_handler(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(tick_work, tick_work_handler);
 
 static void tick_work_handler(struct k_work *work) {
     ARG_UNUSED(work);
+    /* Only animate while the device is ACTIVE. On IDLE/SLEEP we blank
+     * the strip once and stop re-scheduling; the activity listener
+     * kicks us again when ACTIVE returns. */
+    if (zmk_activity_get_state() != ZMK_ACTIVITY_ACTIVE) {
+        blank_strip();
+        return;
+    }
     render();
     k_work_schedule(&tick_work, K_MSEC(TICK_MS));
 }
+
+static int rgb_reactive_activity_listener(const zmk_event_t *eh) {
+    if (!as_zmk_activity_state_changed(eh)) {
+        return -ENOTSUP;
+    }
+    /* Run the tick now so the state change is reflected immediately
+     * instead of after up to TICK_MS. k_work_reschedule replaces any
+     * pending schedule, so we don't end up double-queued. */
+    k_work_reschedule(&tick_work, K_NO_WAIT);
+    return 0;
+}
+
+ZMK_LISTENER(rgb_reactive, rgb_reactive_activity_listener);
+ZMK_SUBSCRIPTION(rgb_reactive, zmk_activity_state_changed);
 
 void rgb_reactive_set_layer(uint8_t layer) {
     k_spinlock_key_t key = k_spin_lock(&state_lock);

@@ -6,7 +6,7 @@
 - **MCU:** generic AliExpress nRF52840 ProMicro clones — **NOT real Nice!Nano v2**. Pinout-compatible on the 24 standard Pro Micro castellations. **Does NOT expose P1.07** (no back pads — clone has top-side through-holes labeled `107`, `106`, `102`, `101`, plus a 4-pin QSPI header `VDD/DO/CLK/GND`. None of these connect to PCB when MCU is mounted normally).
 - **Switches:** Choc.
 - **LEDs per side:** 21 SK6812MINI-E (in-switch) + 6 WS2812B-5050 (underglow) = **27 daisy-chained**.
-- **Power:** USB-C, no battery yet. 1200 mAh Luxorparts LiPo on order — has **JST-PH 2.0mm**, PCB connector is 1.25mm → user splice with kit pigtail.
+- **Power:** Wireless — 1200 mAh Luxorparts LiPo per half (JST-PH 2.0mm → 1.25mm splice via kit pigtail). USB-C still used for flashing / charging.
 - **Host:** Norwegian Windows layout.
 - **Build target:** `nice_nano_v2` (works because clone shares standard Pro Micro D-pins).
 
@@ -34,8 +34,9 @@ ZMK's built-in `rgb_underglow.c` is **disabled** on this shield (`CONFIG_ZMK_RGB
 
 - **BASE (layer 0)** → swirl animation (full-hue cycle, 3s period, using BASE's S/V)
 - **other layers** → solid layer color
+- **idle / sleep** → strip blanked, tick stops; wakes on next keypress
 
-There is no separate idle mode and no per-key reactive flash — earlier iterations of this controller had both, but they were ripped out because (a) the flash code never worked reliably and (b) the swirl-on-BASE is enough motion. Git history (see `42c16f0` and earlier) has the previous, more complex version.
+There is no per-key reactive flash — an earlier iteration had it, but it was ripped out because it never worked reliably (swirl-on-BASE is enough motion). Git history (see `42c16f0` and earlier) has the previous, more complex version. The idle/sleep blanking, in contrast, is current: `tick_work_handler` checks `zmk_activity_get_state()` and the listener wakes the tick on state changes.
 
 ### Files
 
@@ -91,11 +92,16 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 - `Corne_{L,R}.conf` only set `CONFIG_ZMK_DISPLAY=y`; the rest (status screen mode, LVGL features, pool size, work queue, etc.) is set by `boards/shields/nice_oled/Kconfig.defconfig` in the module.
 - Tested with ZMK v0.3 per the module README — matches our `west.yml` revision.
 
+## Power management
+
+- `CONFIG_ZMK_SLEEP=y` in `config/Corne.conf`. Defaults apply: 30s of no keypress → IDLE (rgb_reactive blanks strip, OLED off, BLE relaxed); +15min → deep sleep (`sys_poweroff`, key wakes).
+- ZMK's activity tracker runs per-half (each side subscribes to its own local `zmk_position_state_changed`), so the half you stop touching goes to sleep on its own timer. Typing only on one side will eventually dim/sleep the other.
+- `rgb_reactive.c` is the only blocker for true idle savings — it ticks every 50ms and writes to the strip regardless of HID/BLE activity. The activity-listener gate handles that.
+
 ## Open / TODO
 
-- User had ~4 LEDs working last we synced; was working through chain to fix bad solder joints.
 - NUM layer (index 2) defined in keymap with `&trans` placeholders. No key bound to `&mo 2` yet — user must add activation.
-- `BASE_BRIGHTNESS=60` in `rgb_reactive.c` (≈24% V). Low enough to stay within battery's 1C rating when batteries arrive.
+- `BASE_BRIGHTNESS=60` in `rgb_reactive.c` (≈24% V). Low enough to stay within the 1200 mAh LiPo's 1C rating.
 - `CONFIG_BT_CTLR_TX_PWR_PLUS_8=y` → high BLE power, drains battery faster. User may want to drop for runtime.
 
 ## Build / flash
