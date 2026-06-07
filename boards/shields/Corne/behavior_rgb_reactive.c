@@ -19,7 +19,13 @@ static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
                                      struct zmk_behavior_binding_event event) {
     switch (binding->param1) {
     case RGB_RX_CMD_SET_LAYER:
+        /* The dongle (central) has no strip — rgb_reactive.c isn't
+         * compiled there, so there's nothing to set locally. The
+         * GLOBAL locality still forwards this invocation to both
+         * peripherals, which DO have strips and apply it. */
+#if IS_ENABLED(CONFIG_WS2812_STRIP)
         rgb_reactive_set_layer((uint8_t)binding->param2);
+#endif
         break;
     default:
         LOG_WRN("unknown rgb_reactive cmd %u", binding->param1);

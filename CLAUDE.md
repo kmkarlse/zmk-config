@@ -9,6 +9,7 @@
 - **Power:** Wireless — 1200 mAh Luxorparts LiPo per half (JST-PH 2.0mm → 1.25mm splice via kit pigtail). USB-C still used for flashing / charging.
 - **Host:** Norwegian Windows layout.
 - **Build target:** `nice_nano_v2` (works because clone shares standard Pro Micro D-pins).
+- **Dongle:** a THIRD identical nRF52840 ProMicro clone acts as the sole BLE central, USB-wired to the host. Both halves are peripherals. No keys/LEDs/OLED on it. See "## Dongle (3-piece split)".
 
 ## Critical config: RGB data pin is P0.06, not P1.07
 
@@ -42,7 +43,7 @@ There is no per-key reactive flash — an earlier iteration had it, but it was r
 
 - **`rgb_reactive.c`** — strip controller. Owns `led_strip`, ticks at 50ms, renders layer 0 as swirl and other layers as solid. Public API: `rgb_reactive_set_layer`. Compiles on both halves.
 - **`behavior_rgb_reactive.c`** — global-locality behavior shim. Decodes `(param1=cmd, param2=arg)` and calls into the controller. Invoked programmatically from `layer_color.c`, not bound in the keymap.
-- **`layer_color.c`** — central-side coordinator. Subscribes to `zmk_layer_state_changed` (central-only in ZMK) and invokes the global behavior so the new layer auto-propagates to the peripheral over split BLE.
+- **`layer_color.c`** — central-side coordinator. Subscribes to `zmk_layer_state_changed` (central-only in ZMK) and invokes the global behavior so the new layer auto-propagates to **both** peripheral halves over split BLE. The central is now the **dongle** (which has no strip of its own — see below).
 - **`rgb_reactive.h`** — protocol constants. Currently only `RGB_RX_CMD_SET_LAYER`.
 
 ### Behavior protocol
@@ -62,9 +63,12 @@ Brightness V is fixed at 60 (≈24%) across all layers; was previously controlle
 
 ### Build gates / boot
 
-`CMakeLists.txt` gates the controller + behavior on `CONFIG_WS2812_STRIP` (both halves). `layer_color.c` is additionally gated on central. Per `zmk/app/CMakeLists.txt:47`, ZMK gates `keymap.c` and `events/layer_state_changed.c` on central, so peripheral has no layer symbols — that's why the coordinator is central-only.
+`CMakeLists.txt` now has three independent gates (a half has a strip + is peripheral; the dongle is central + strip-less):
+- `rgb_reactive.c` (strip controller) → `CONFIG_WS2812_STRIP` (halves only).
+- `behavior_rgb_reactive.c` (global behavior shim) → `WS2812_STRIP OR central OR not-split`. Halves RECEIVE+drive the strip; the dongle FORWARDS the broadcast to both peripherals. On the strip-less dongle the local `rgb_reactive_set_layer` call compiles out via `#if IS_ENABLED(CONFIG_WS2812_STRIP)` in the `.c`.
+- `layer_color.c` (coordinator) → central only. Per `zmk/app/CMakeLists.txt`, ZMK gates `keymap.c` and `events/layer_state_changed.c` on central, so peripherals have no layer symbols — that's why the coordinator is central-only (now the dongle).
 
-Controller init runs at `SYS_INIT(APPLICATION, 90)` and starts ticking 500ms after boot. The central coordinator broadcasts the initial `SET_LAYER` 3s after boot so the first broadcast lands after the peripheral split connection is up (global behavior invocations only reach already-connected peripherals).
+Controller init runs at `SYS_INIT(APPLICATION, 90)` and starts ticking 500ms after boot. The dongle broadcasts the initial `SET_LAYER` 3s after boot so it lands after the split links are up (global behavior invocations only reach already-connected peripherals). At boot every half defaults to BASE (layer 0) on its own, so a missed first broadcast is harmless.
 
 ### DT wiring & the 8-char name limit
 
@@ -83,18 +87,36 @@ behaviors {
 
 **Critical**: ZMK's split BLE service caps `behavior_dev` at 9 bytes incl. NUL (`ZMK_SPLIT_RUN_BEHAVIOR_DEV_LEN` in `zmk/split/bluetooth/service.h`). Anything longer is truncated on the wire and the peripheral lookup misses, silently breaking cross-half sync. The explicit `label` property pins the device name regardless of Zephyr's `DEVICE_DT_NAME` fallback variability.
 
+## Dongle (3-piece split)
+
+A third nRF52840 ProMicro clone is the **sole BLE central**, USB-wired to the host. **Both halves are peripherals.** This offloads the host link onto an always-on USB device (steadier link, symmetric battery drain on the halves). The keyboard does NOT work without the dongle — there is no central among the halves anymore. The old 2-piece (left=central) config lives in git history if ever needed.
+
+### Shield: `Corne_D` (in the existing `boards/shields/Corne/` dir)
+- `Corne_D.overlay` — mock kscan (`zmk,kscan-mock`, 0 events), the full 42-key `default_transform`, the `rgb_reactive` behavior node, `chosen { zmk,kscan; zmk,physical-layout }`. No OLED/SPI/I2C/led_strip. Living in the `Corne` shield dir means ZMK strips `_D` → reuses `config/Corne.keymap` and `config/Corne.conf` (no per-dongle copies).
+- `Corne_D.conf` — `ZMK_SPLIT_BLE_CENTRAL_PERIPHERALS=2`, `ZMK_BATTERY_REPORTING=n`, `ZMK_SLEEP=n` (USB-powered; deep sleep would drop the host link).
+- `Kconfig.defconfig` — `SHIELD_CORNE_D` sets `ZMK_SPLIT_ROLE_CENTRAL=y`. The old `SHIELD_CORNE_L` central-role block is **gone** (both halves now default to peripheral).
+
+### Positions — do NOT add offsets
+ZMK v0.3 central applies each peripheral's reported position **as-is** (verified in `split/bluetooth/central.c` + `keymap.c`: `source` is carried but never offsets `position`). The halves already bake global positions into their own transforms (left `col-offset 0`, right `col-offset 6`), so they keep producing correct, non-overlapping positions as peripherals. The dongle's transform just has to be full-size (42 keys) so everything lands in range. Connection/slot order is irrelevant because positions are self-describing.
+
+### Battery/sleep moved per-shield
+`config/Corne.conf` no longer sets `ZMK_BATTERY_REPORTING`/`ZMK_SLEEP` — the user config conf is applied last and would clobber the dongle's `=n`. Halves set both `=y` in `Corne_{L,R}.conf`; dongle sets both `=n`.
+
+### Re-pairing required
+Introducing a third device changes the BLE identities. Flash `settings_reset` to **all three** MCUs, then the real firmware to all three. See "## Build / flash".
+
 ## OLED status screens
 
 OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down from the user's view). Status screen is provided by the [`mctechnology17/zmk-nice-oled`](https://github.com/mctechnology17/zmk-nice-oled) module, pulled in via `config/west.yml` and composed into the build via `build.yaml` shield list (`Corne_L nice_oled` / `Corne_R nice_oled`). Module assets are pre-rotated for vertical mounting — do NOT reuse with horizontally-mounted OLEDs.
 
 - Module supplies its own `custom_status_screen.c`, layer/output/battery/WPM/HID widgets, and peripheral animations (cat, spaceman, pokemon, etc).
-- Per-half differentiation is automatic: central shows status info, peripheral shows animations. Toggle widgets via `CONFIG_NICE_OLED_WIDGET_*` Kconfig in the shield's Kconfig.defconfig (or override per-half in `Corne_{L,R}.conf`).
+- nice_oled auto-selects central vs peripheral screen from `CONFIG_ZMK_SPLIT_ROLE_CENTRAL`. Since the dongle is now the only central (and is headless), **both halves draw the peripheral screen** (background + output status + battery %). The old central layer/WPM screen is gone; layer is still indicated by RGB color. `Corne_L.conf` was switched from central widgets to the peripheral-animation-off block to match `Corne_R.conf`. Toggle widgets via `CONFIG_NICE_OLED_WIDGET_*` in `Corne_{L,R}.conf`.
 - `Corne_{L,R}.conf` only set `CONFIG_ZMK_DISPLAY=y`; the rest (status screen mode, LVGL features, pool size, work queue, etc.) is set by `boards/shields/nice_oled/Kconfig.defconfig` in the module.
 - Tested with ZMK v0.3 per the module README — matches our `west.yml` revision.
 
 ## Power management
 
-- `CONFIG_ZMK_SLEEP=y` in `config/Corne.conf`. Defaults apply: 30s of no keypress → IDLE (rgb_reactive blanks strip, OLED off, BLE relaxed); +15min → deep sleep (`sys_poweroff`, key wakes).
+- `CONFIG_ZMK_SLEEP=y` per-half in `Corne_{L,R}.conf` (NOT the shared `config/Corne.conf` — see Dongle section). Defaults apply: 30s of no keypress → IDLE (rgb_reactive blanks strip, OLED off, BLE relaxed); +15min → deep sleep (`sys_poweroff`, key wakes). The **dongle** sets `ZMK_SLEEP=n` — it's USB-powered and must stay connected.
 - ZMK's activity tracker runs per-half (each side subscribes to its own local `zmk_position_state_changed`), so the half you stop touching goes to sleep on its own timer. Typing only on one side will eventually dim/sleep the other.
 - `rgb_reactive.c` is the only blocker for true idle savings — it ticks every 50ms and writes to the strip regardless of HID/BLE activity. The activity-listener gate handles that.
 
@@ -106,6 +128,7 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 
 ## Build / flash
 
-- GitHub Actions build on push to `main`. Three artifacts: `Corne_L`, `Corne_R`, `settings_reset`.
-- Each half flashed separately via UF2 drag-drop after double-tap reset.
-- `settings_reset` UF2 wipes saved RGB/BLE/etc state — flash that, then re-flash normal firmware.
+- GitHub Actions build on push to `main`. Four artifacts now: `Corne_D` (dongle/central), `Corne_L`, `Corne_R` (both peripheral), `settings_reset`.
+- Each device flashed separately via UF2 drag-drop after double-tap reset.
+- `settings_reset` UF2 wipes saved RGB/BLE/etc state.
+- **First time switching to the dongle (re-pair):** flash `settings_reset` to **all three** MCUs first, then flash the real firmware to all three (`Corne_D` → dongle, `Corne_L`/`Corne_R` → halves). The dongle then scans + bonds both halves. Plug the dongle into the host via USB.

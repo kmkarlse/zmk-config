@@ -1,14 +1,16 @@
-if SHIELD_CORNE_L
-
-config ZMK_KEYBOARD_NAME
-	default "Corne"
+# The dongle is the sole central now. Both halves are peripherals
+# (no ZMK_SPLIT_ROLE_CENTRAL → defaults to peripheral).
+if SHIELD_CORNE_D
 
 config ZMK_SPLIT_ROLE_CENTRAL
 	default y
 
 endif
 
-if SHIELD_CORNE_L || SHIELD_CORNE_R
+if SHIELD_CORNE_L || SHIELD_CORNE_R || SHIELD_CORNE_D
+
+config ZMK_KEYBOARD_NAME
+	default "Corne"
 
 config ZMK_SPLIT
     default y
