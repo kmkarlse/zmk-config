@@ -43,11 +43,16 @@
             //   { = RA(N7)   } = RA(N0)
             //   [ = RA(N8)   ] = RA(N9)
             //   \ = RA(NON_US_BSLH)   (AltGr + < on Norwegian ISO)
+            //
+            // &rgb_reactive 1 0 = RGB_RX_CMD_TOGGLE (see rgb_reactive.h):
+            // flips the LED strip on/off on both halves via the GLOBAL
+            // behavior. Replaced the old &bt BT_CLR here (dongle now owns
+            // the host link, so profile-clearing on the halves is moot).
 
             bindings = <
 &kp F1   &kp F2  &kp F3  &kp F4  &kp F5  &kp F6      &kp F7      &kp F8      &kp F9               &kp F10  &kp F11  &kp F12
 &kp TAB  &trans  &trans  &trans  &trans  &trans      &kp RA(N7)  &kp RA(N0)  &kp N9               &kp N0   &trans   &trans
-&trans   &trans  &trans  &trans  &trans  &bt BT_CLR  &kp RA(N8)  &kp RA(N9)  &kp RA(NON_US_BSLH)  &trans   &trans   &trans
+&trans   &trans  &trans  &trans  &trans  &rgb_reactive 1 0  &kp RA(N8)  &kp RA(N9)  &kp RA(NON_US_BSLH)  &trans   &trans   &trans
                          &trans  &trans  &tog 3      &trans      &trans      &trans
             >;
         };

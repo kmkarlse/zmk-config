@@ -45,6 +45,7 @@ static struct led_rgb pixels[STRIP_NUM_PIXELS];
 static struct k_spinlock state_lock;
 
 static uint8_t current_layer = 0;
+static bool rgb_enabled = true;   /* user on/off toggle; defaults on at boot */
 
 /* HSV → RGB. h 0..359, s/v 0..100. Output 0..255 per channel. */
 static struct led_rgb hsb_to_rgb(uint16_t h, uint8_t s, uint8_t v) {
@@ -112,6 +113,16 @@ K_WORK_DELAYABLE_DEFINE(tick_work, tick_work_handler);
 
 static void tick_work_handler(struct k_work *work) {
     ARG_UNUSED(work);
+    k_spinlock_key_t key = k_spin_lock(&state_lock);
+    bool enabled = rgb_enabled;
+    k_spin_unlock(&state_lock, key);
+
+    /* User toggled the strip off: blank once and stop re-scheduling.
+     * rgb_reactive_toggle() kicks the tick again when turned back on. */
+    if (!enabled) {
+        blank_strip();
+        return;
+    }
     /* Only animate while the device is ACTIVE. On IDLE/SLEEP we blank
      * the strip once and stop re-scheduling; the activity listener
      * kicks us again when ACTIVE returns. */
@@ -141,6 +152,15 @@ void rgb_reactive_set_layer(uint8_t layer) {
     k_spinlock_key_t key = k_spin_lock(&state_lock);
     current_layer = layer;
     k_spin_unlock(&state_lock, key);
+}
+
+void rgb_reactive_toggle(void) {
+    k_spinlock_key_t key = k_spin_lock(&state_lock);
+    rgb_enabled = !rgb_enabled;
+    k_spin_unlock(&state_lock, key);
+    /* Reflect immediately: kick the tick now. If now off it blanks and
+     * stops; if now on it renders and resumes the 50ms loop. */
+    k_work_reschedule(&tick_work, K_NO_WAIT);
 }
 
 static int rgb_reactive_init(const struct device *dev) {

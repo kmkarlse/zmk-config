@@ -27,6 +27,13 @@ static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
         rgb_reactive_set_layer((uint8_t)binding->param2);
 #endif
         break;
+    case RGB_RX_CMD_TOGGLE:
+        /* Strip-less dongle compiles this out; the GLOBAL locality still
+         * forwards the invocation to both peripherals, which flip locally. */
+#if IS_ENABLED(CONFIG_WS2812_STRIP)
+        rgb_reactive_toggle();
+#endif
+        break;
     default:
         LOG_WRN("unknown rgb_reactive cmd %u", binding->param1);
         break;

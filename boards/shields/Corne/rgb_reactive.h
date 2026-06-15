@@ -17,5 +17,11 @@
 
 /* Behavior commands, packed into binding param1 / param2. */
 #define RGB_RX_CMD_SET_LAYER 0
+#define RGB_RX_CMD_TOGGLE    1   /* param2 ignored; flips strip on/off */
 
 void rgb_reactive_set_layer(uint8_t layer);
+
+/* Flip the strip on/off. Off = blanked + tick stopped until toggled back on
+ * (independent of the idle/sleep blanking). Called on both halves via the
+ * GLOBAL behavior so one keypress toggles both. */
+void rgb_reactive_toggle(void);
