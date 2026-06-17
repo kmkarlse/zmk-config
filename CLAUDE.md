@@ -117,6 +117,7 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 ## Power management
 
 - `CONFIG_ZMK_SLEEP=y` per-half in `Corne_{L,R}.conf` (NOT the shared `config/Corne.conf` — see Dongle section). Defaults apply: 30s of no keypress → IDLE (rgb_reactive blanks strip, OLED off, BLE relaxed); +15min → deep sleep (`sys_poweroff`, key wakes). The **dongle** sets `ZMK_SLEEP=n` — it's USB-powered and must stay connected.
+- **`kscan0` MUST keep `wakeup-source;`** (in `Corne.dtsi`) or keypress-wake from deep sleep silently breaks. On deep sleep ZMK runs `zmk_pm_suspend_devices()`, which suspends every device *except* wakeup-enabled ones; ZMK only marks the kscan wakeup-enabled (`physical_layouts.c` → `pm_device_wakeup_enable`) if it is wakeup-*capable*, i.e. has the `wakeup-source` property. Without it the matrix is suspended → inputs `GPIO_DISCONNECTED` → no GPIO SENSE → System OFF can only be woken by a power-cycle/reset. Stock ZMK corne ships this property; it had been dropped from our shield and was re-added.
 - ZMK's activity tracker runs per-half (each side subscribes to its own local `zmk_position_state_changed`), so the half you stop touching goes to sleep on its own timer. Typing only on one side will eventually dim/sleep the other.
 - `rgb_reactive.c` is the only blocker for true idle savings — it ticks every 50ms and writes to the strip regardless of HID/BLE activity. The activity-listener gate handles that.
 
