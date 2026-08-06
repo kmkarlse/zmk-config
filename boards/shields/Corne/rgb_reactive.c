@@ -26,7 +26,7 @@ LOG_MODULE_REGISTER(rgb_reactive, CONFIG_ZMK_LOG_LEVEL);
 #define STRIP_NUM_PIXELS  DT_PROP(STRIP_NODE, chain_length)
 
 #define TICK_MS           50
-#define BASE_BRIGHTNESS   40   /* HSV V%; ~⅓ less strip current than 60 */
+#define BASE_BRIGHTNESS   20   /* HSV V%; half of v=40 — dim but visible */
 /* ZMK's swirl runs at speed*2 hue/tick at 50ms ticks. Default speed=3 →
  * 6 hue/50ms → 360° in 3000ms. Match that. */
 #define SWIRL_PERIOD_MS   3000
@@ -45,7 +45,7 @@ static struct led_rgb pixels[STRIP_NUM_PIXELS];
 static struct k_spinlock state_lock;
 
 static uint8_t current_layer = 0;
-static bool rgb_enabled = true;   /* user on/off toggle; defaults on at boot */
+static bool rgb_enabled = false;  /* user on/off toggle; defaults OFF at boot */
 
 /* HSV → RGB. h 0..359, s/v 0..100. Output 0..255 per channel. */
 static struct led_rgb hsb_to_rgb(uint16_t h, uint8_t s, uint8_t v) {

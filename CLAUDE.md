@@ -59,7 +59,7 @@ Single command: `RGB_RX_CMD_SET_LAYER` (param1=0, param2=layer index 0..3). Each
 | 2 | NUM  | red (placeholder bindings) | 0, 100, 60 |
 | 3 | L3   | orange (placeholder bindings) | 30, 100, 60 |
 
-Brightness V is fixed at 60 (≈24%) across all layers; was previously controlled by `CONFIG_ZMK_RGB_UNDERGLOW_BRT_START`. Edit `BASE_BRIGHTNESS` in `rgb_reactive.c` to change.
+Brightness V is fixed at 20 across all layers; was previously controlled by `CONFIG_ZMK_RGB_UNDERGLOW_BRT_START`. Edit `BASE_BRIGHTNESS` in `rgb_reactive.c` to change. Strip defaults **OFF** at boot (`rgb_enabled = false`); the LED toggle key turns it on.
 
 ### Build gates / boot
 
@@ -117,13 +117,14 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 ## Power management
 
 - `CONFIG_ZMK_SLEEP=y` per-half in `Corne_{L,R}.conf` (NOT the shared `config/Corne.conf` — see Dongle section). Defaults apply: 30s of no keypress → IDLE (rgb_reactive blanks strip, OLED off, BLE relaxed); +15min → deep sleep (`sys_poweroff`, key wakes). The **dongle** sets `ZMK_SLEEP=n` — it's USB-powered and must stay connected.
+- **`kscan0` MUST keep `wakeup-source;`** (in `Corne.dtsi`) or keypress-wake from deep sleep silently breaks. On deep sleep ZMK runs `zmk_pm_suspend_devices()`, which suspends every device *except* wakeup-enabled ones; ZMK only marks the kscan wakeup-enabled (`physical_layouts.c` → `pm_device_wakeup_enable`) if it is wakeup-*capable*, i.e. has the `wakeup-source` property. Without it the matrix is suspended → inputs `GPIO_DISCONNECTED` → no GPIO SENSE → System OFF can only be woken by a power-cycle/reset. Stock ZMK corne ships this property; it had been dropped from our shield and was re-added.
 - ZMK's activity tracker runs per-half (each side subscribes to its own local `zmk_position_state_changed`), so the half you stop touching goes to sleep on its own timer. Typing only on one side will eventually dim/sleep the other.
 - `rgb_reactive.c` is the only blocker for true idle savings — it ticks every 50ms and writes to the strip regardless of HID/BLE activity. The activity-listener gate handles that.
 
 ## Open / TODO
 
 - NUM layer (index 2) defined in keymap with `&trans` placeholders. No key bound to `&mo 2` yet — user must add activation.
-- `BASE_BRIGHTNESS=40` in `rgb_reactive.c` — that's `v=40` in HSV, so the brightest channel of any pixel tops out at ~40% duty (102/255). Roughly ⅓ less strip current than v=60. Visibly dimmer but still clearly lit on the in-switch SK6812s.
+- `BASE_BRIGHTNESS=20` in `rgb_reactive.c` — `v=20` in HSV, brightest channel tops out at ~20% duty (51/255). Half of old v=40. Strip also defaults OFF at boot — LED toggle key turns it on.
 - `CONFIG_BT_CTLR_TX_PWR_0=y` → 0 dBm (1 mW), Zephyr default. Was PandaKB-stock `_PLUS_8=y` (+8 dBm, 6 mW). Revert if L↔R sync gets flaky in your environment.
 
 ## Build / flash
