@@ -59,7 +59,7 @@ Single command: `RGB_RX_CMD_SET_LAYER` (param1=0, param2=layer index 0..3). Each
 | 2 | NUM  | red (placeholder bindings) | 0, 100, 60 |
 | 3 | L3   | orange (placeholder bindings) | 30, 100, 60 |
 
-Brightness V is fixed at 60 (≈24%) across all layers; was previously controlled by `CONFIG_ZMK_RGB_UNDERGLOW_BRT_START`. Edit `BASE_BRIGHTNESS` in `rgb_reactive.c` to change.
+Brightness V is fixed at 20 across all layers; was previously controlled by `CONFIG_ZMK_RGB_UNDERGLOW_BRT_START`. Edit `BASE_BRIGHTNESS` in `rgb_reactive.c` to change. Strip defaults **OFF** at boot (`rgb_enabled = false`); the LED toggle key turns it on.
 
 ### Build gates / boot
 
@@ -124,7 +124,7 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 ## Open / TODO
 
 - NUM layer (index 2) defined in keymap with `&trans` placeholders. No key bound to `&mo 2` yet — user must add activation.
-- `BASE_BRIGHTNESS=40` in `rgb_reactive.c` — that's `v=40` in HSV, so the brightest channel of any pixel tops out at ~40% duty (102/255). Roughly ⅓ less strip current than v=60. Visibly dimmer but still clearly lit on the in-switch SK6812s.
+- `BASE_BRIGHTNESS=20` in `rgb_reactive.c` — `v=20` in HSV, brightest channel tops out at ~20% duty (51/255). Half of old v=40. Strip also defaults OFF at boot — LED toggle key turns it on.
 - `CONFIG_BT_CTLR_TX_PWR_0=y` → 0 dBm (1 mW), Zephyr default. Was PandaKB-stock `_PLUS_8=y` (+8 dBm, 6 mW). Revert if L↔R sync gets flaky in your environment.
 
 ## Build / flash
