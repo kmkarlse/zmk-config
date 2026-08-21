@@ -64,10 +64,10 @@
             //   LEFT  DOWN  RIGHT
 
             bindings = <
-&trans  &trans  &trans          &kp UP_ARROW    &trans           &trans  &trans  &trans  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9  &trans
-&trans  &trans  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans  &trans  &trans  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6  &kp NUMBER_0
-&trans  &trans  &trans          &trans          &trans           &trans  &trans  &trans  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &trans
-                                &trans          &trans           &trans  &trans  &trans  &trans
+&trans  &trans  &trans          &kp UP_ARROW    &trans           &kp PERCENT  &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9  &trans
+&trans  &trans  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp PLUS     &kp LEFT_BRACKET      &kp RIGHT_BRACKET      &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6  &kp NUMBER_0
+&trans  &trans  &trans          &trans          &trans           &kp EQUAL    &kp LEFT_BRACE        &kp RIGHT_BRACE        &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &trans
+                                &trans          &trans           &trans       &trans                &trans                 &trans
             >;
         };
 
