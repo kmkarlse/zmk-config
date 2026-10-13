@@ -3,9 +3,7 @@
  *
  * Replaces ZMK's built-in rgb_underglow on this shield. Both halves run an
  * identical 50ms render loop over the local 27-LED chain (6 underglow then
- * 21 per-key). The active layer drives what's drawn:
- *   layer 0 (BASE) → continuous swirl
- *   other layers   → solid layer color
+ * 21 per-key). Each layer is drawn as its own solid color.
  *
  * Layer state is broadcast from central via a BEHAVIOR_LOCALITY_GLOBAL
  * behavior (see behavior_rgb_reactive.c) so changes auto-propagate over

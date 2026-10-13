@@ -33,15 +33,14 @@ Verified by user via multimeter: continuity from first underglow LED's DIN ↔ D
 
 ZMK's built-in `rgb_underglow.c` is **disabled** on this shield (`CONFIG_ZMK_RGB_UNDERGLOW=n` in both `Corne_{L,R}.conf`). We replace it with a small custom controller that runs on both halves. Active layer drives what's drawn:
 
-- **BASE (layer 0)** → swirl animation (full-hue cycle, 3s period, using BASE's S/V)
-- **other layers** → solid layer color
+- **every layer** → solid layer color (BASE used to swirl; switched to solid cyan)
 - **idle / sleep** → strip blanked, tick stops; wakes on next keypress
 
-There is no per-key reactive flash — an earlier iteration had it, but it was ripped out because it never worked reliably (swirl-on-BASE is enough motion). Git history (see `42c16f0` and earlier) has the previous, more complex version. The idle/sleep blanking, in contrast, is current: `tick_work_handler` checks `zmk_activity_get_state()` and the listener wakes the tick on state changes.
+There is no per-key reactive flash — an earlier iteration had it, but it was ripped out because it never worked reliably (the BASE swirl that replaced it has since been removed too — all layers are solid now). Git history (see `42c16f0` and earlier) has the previous, more complex version. The idle/sleep blanking, in contrast, is current: `tick_work_handler` checks `zmk_activity_get_state()` and the listener wakes the tick on state changes.
 
 ### Files
 
-- **`rgb_reactive.c`** — strip controller. Owns `led_strip`, ticks at 50ms, renders layer 0 as swirl and other layers as solid. Public API: `rgb_reactive_set_layer`. Compiles on both halves.
+- **`rgb_reactive.c`** — strip controller. Owns `led_strip`, ticks at 50ms, renders every layer as a solid color. Public API: `rgb_reactive_set_layer`. Compiles on both halves.
 - **`behavior_rgb_reactive.c`** — global-locality behavior shim. Decodes `(param1=cmd, param2=arg)` and calls into the controller. Invoked programmatically from `layer_color.c`, not bound in the keymap.
 - **`layer_color.c`** — central-side coordinator. Subscribes to `zmk_layer_state_changed` (central-only in ZMK) and invokes the global behavior so the new layer auto-propagates to **both** peripheral halves over split BLE. The central is now the **dongle** (which has no strip of its own — see below).
 - **`rgb_reactive.h`** — protocol constants. Currently only `RGB_RX_CMD_SET_LAYER`.
@@ -54,7 +53,7 @@ Single command: `RGB_RX_CMD_SET_LAYER` (param1=0, param2=layer index 0..3). Each
 
 | Layer | Name | Color | HSB |
 |---|---|---|---|
-| 0 | BASE | cyan (swirl uses S/V) | 182, 73, 60 |
+| 0 | BASE | cyan | 182, 73, 60 |
 | 1 | SYM  | green | 120, 100, 60 |
 | 2 | NUM  | red (placeholder bindings) | 0, 100, 60 |
 | 3 | L3   | orange (placeholder bindings) | 30, 100, 60 |

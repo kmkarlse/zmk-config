@@ -2,8 +2,7 @@
  * Strip controller. See rgb_reactive.h for protocol overview.
  *
  * Owns the led_strip device on both halves. Renders the active layer
- * every 50ms: BASE (layer 0) animates as a swirl, every other layer
- * is solid. Layer state is updated via rgb_reactive_set_layer, called
+ * every 50ms as a solid per-layer color. Layer state is updated via rgb_reactive_set_layer, called
  * from behavior_rgb_reactive.c on both halves.
  */
 #include <string.h>
@@ -27,13 +26,10 @@ LOG_MODULE_REGISTER(rgb_reactive, CONFIG_ZMK_LOG_LEVEL);
 
 #define TICK_MS           50
 #define BASE_BRIGHTNESS   20   /* HSV V%; half of v=40 — dim but visible */
-/* ZMK's swirl runs at speed*2 hue/tick at 50ms ticks. Default speed=3 →
- * 6 hue/50ms → 360° in 3000ms. Match that. */
-#define SWIRL_PERIOD_MS   3000
 
 struct layer_color { uint16_t h; uint8_t s; uint8_t b; };
 static const struct layer_color layer_colors[] = {
-    { 182, 73,  BASE_BRIGHTNESS },  /* 0 BASE = cyan (RGB 66,239,245) — swirl uses S/V */
+    { 182, 73,  BASE_BRIGHTNESS },  /* 0 BASE = cyan (RGB 66,239,245) */
     { 120, 100, BASE_BRIGHTNESS },  /* 1 SYM  = green */
     {   0, 100, BASE_BRIGHTNESS },  /* 2 NUM  = red */
     {  30, 100, BASE_BRIGHTNESS },  /* 3 L3   = orange */
@@ -73,25 +69,15 @@ static struct led_rgb hsb_to_rgb(uint16_t h, uint8_t s, uint8_t v) {
 }
 
 static void render(void) {
-    int64_t now = k_uptime_get();
     k_spinlock_key_t key = k_spin_lock(&state_lock);
     uint8_t layer = current_layer;
     k_spin_unlock(&state_lock, key);
 
     const struct layer_color *lc = &layer_colors[layer % ARRAY_SIZE(layer_colors)];
 
-    if (layer == 0) {
-        /* BASE: swirl using the layer's S/V. */
-        uint16_t base_hue = (uint16_t)((now * 360 / SWIRL_PERIOD_MS) % 360);
-        for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
-            uint16_t h = (base_hue + (i * 360) / STRIP_NUM_PIXELS) % 360;
-            pixels[i] = hsb_to_rgb(h, lc->s, lc->b);
-        }
-    } else {
-        struct led_rgb base = hsb_to_rgb(lc->h, lc->s, lc->b);
-        for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
-            pixels[i] = base;
-        }
+    struct led_rgb color = hsb_to_rgb(lc->h, lc->s, lc->b);
+    for (int i = 0; i < STRIP_NUM_PIXELS; i++) {
+        pixels[i] = color;
     }
 
     int ret = led_strip_update_rgb(led_strip, pixels, STRIP_NUM_PIXELS);
