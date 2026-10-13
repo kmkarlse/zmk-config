@@ -53,10 +53,10 @@ Single command: `RGB_RX_CMD_SET_LAYER` (param1=0, param2=layer index 0..3). Each
 
 | Layer | Name | Color | HSB |
 |---|---|---|---|
-| 0 | BASE | cyan | 182, 73, 60 |
-| 1 | SYM  | green | 120, 100, 60 |
-| 2 | NUM  | red (placeholder bindings) | 0, 100, 60 |
-| 3 | L3   | orange (placeholder bindings) | 30, 100, 60 |
+| 0 | BASE | cyan | 182, 73, 20 |
+| 1 | SYM  | green | 120, 100, 20 |
+| 2 | NUM  | red (placeholder bindings) | 0, 100, 20 |
+| 3 | L3   | orange (placeholder bindings) | 30, 100, 20 |
 
 Brightness V is fixed at 20 across all layers; was previously controlled by `CONFIG_ZMK_RGB_UNDERGLOW_BRT_START`. Edit `BASE_BRIGHTNESS` in `rgb_reactive.c` to change. Strip defaults **ON** at boot (`rgb_enabled = true`); the LED toggle key turns it off. The toggle state is not persisted, so every reboot (incl. waking from deep sleep) comes back ON.
 
