@@ -41,7 +41,7 @@ static struct led_rgb pixels[STRIP_NUM_PIXELS];
 static struct k_spinlock state_lock;
 
 static uint8_t current_layer = 0;
-static bool rgb_enabled = false;  /* user on/off toggle; defaults OFF at boot */
+static bool rgb_enabled = true;   /* user on/off toggle; defaults ON at boot */
 
 /* HSV → RGB. h 0..359, s/v 0..100. Output 0..255 per channel. */
 static struct led_rgb hsb_to_rgb(uint16_t h, uint8_t s, uint8_t v) {
