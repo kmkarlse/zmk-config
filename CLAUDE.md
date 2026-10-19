@@ -56,7 +56,7 @@ Single command: `RGB_RX_CMD_SET_LAYER` (param1=0, param2=layer index 0..3). Each
 | 0 | BASE | cyan | 182, 73, 20 |
 | 1 | SYM  | green | 120, 100, 20 |
 | 2 | NUM  | red (placeholder bindings) | 0, 100, 20 |
-| 3 | GAME | orange (gaming overlay, SYM+G toggles) | 30, 100, 20 |
+| 3 | L3   | orange (placeholder bindings) | 30, 100, 20 |
 
 Brightness V is fixed at 20 across all layers; was previously controlled by `CONFIG_ZMK_RGB_UNDERGLOW_BRT_START`. Edit `BASE_BRIGHTNESS` in `rgb_reactive.c` to change. Strip defaults **ON** at boot (`rgb_enabled = true`); the LED toggle key turns it off. The toggle state is not persisted, so every reboot (incl. waking from deep sleep) comes back ON.
 
@@ -123,7 +123,7 @@ OLEDs are mounted **vertically** on the PandaKB Corne v3 MX (long axis up/down f
 ## Open / TODO
 
 - NUM layer (index 2) defined in keymap with `&trans` placeholders. No key bound to `&mo 2` yet — user must add activation.
-- GAME layer (index 3, was the `L3` placeholder): left-hand gaming overlay — LEFT_GUI→TAB (no accidental Win key), Shift on pinky, Ctrl/Alt on outer thumbs, rest `&trans`. Toggled by `&tog 3` on SYM's G position (SYM + G on/off). The base keymap uses plain `&kp` only — the `config/os/` home-row-mod files are an unused template, not included.
+- The keymap uses plain `&kp` only (no hold-taps) — the `config/os/` home-row-mod files are an unused template, not included.
 - Debounce: press 1ms (near-eager, latency), release 5ms (bounce filter). Raise press back toward 5 if keys double-type.
 - `BASE_BRIGHTNESS=20` in `rgb_reactive.c` — `v=20` in HSV, brightest channel tops out at ~20% duty (51/255). Half of old v=40. Strip defaults ON at boot — LED toggle key turns it off.
 - `CONFIG_BT_CTLR_TX_PWR_0=y` → 0 dBm (1 mW), Zephyr default. Was PandaKB-stock `_PLUS_8=y` (+8 dBm, 6 mW). Revert if L↔R sync gets flaky in your environment.

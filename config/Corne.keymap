@@ -5,7 +5,7 @@
  * produce ø/æ automatically, so home-row right gives you those for free.
  * Layer 1 (SYM)  — F-row, brackets, digits 9/0, backslash.
  * Layer 2 (NUM)  — number row + inverted-T arrow cluster on right hand.
- * Layer 3 (GAME) — gaming overlay, toggled on/off with SYM + G.
+ * Layer 3 (L3)   — placeholder, toggled by long-holding / for 2s.
  */
 
 #include <behaviors.dtsi>
@@ -47,13 +47,10 @@
             // flips the LED strip on/off on both halves via the GLOBAL
             // behavior. Replaced the old &bt BT_CLR here (dongle now owns
             // the host link, so profile-clearing on the halves is moot).
-            //
-            // &tog 3 (G position) toggles the GAME layer. GAME leaves this
-            // position &trans, so SYM + G turns it back off.
 
             bindings = <
 &kp F1   &kp F2     &kp F3     &kp F4     &kp F5  &kp F6             &kp F7  &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
-&kp TAB  &kp RA(W)  &kp RA(Z)  &kp RA(L)  &trans  &tog 3             &trans  &trans  &trans  &trans   &trans   &trans
+&kp TAB  &kp RA(W)  &kp RA(Z)  &kp RA(L)  &trans  &trans             &trans  &trans  &trans  &trans   &trans   &trans
 &trans   &trans     &trans     &trans     &trans  &rgb_reactive 1 0  &trans  &trans  &trans  &trans   &trans   &trans
                                &trans     &trans  &trans             &trans  &trans  &trans
             >;
@@ -74,21 +71,17 @@
             >;
         };
 
-        game_layer {
-            display-name = "GAME";
+        layer_3 {
+            display-name = "L3";
 
-            // Left-hand gaming overlay (right hand is on the mouse):
-            //   - LEFT_GUI -> TAB, so the Windows key can't kick you out of a game
-            //   - pinky column: ESC / TAB / SHIFT; Ctrl + Alt on the outer thumbs
-            //   - SPACE stays on the inner thumb, WASD etc. fall through to BASE
-            // Everything else is &trans; the right thumbs still reach SYM/NUM,
-            // and SYM + G (&tog 3) turns this layer off again.
+            // Placeholder. / position is &trans so 2s hold falls through
+            // to BASE's &fslh_lock and toggles this layer back off.
 
             bindings = <
-&trans          &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&kp TAB         &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&kp LEFT_SHIFT  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                                &kp LCTRL  &kp LEFT_ALT  &trans  &trans  &trans  &trans
+&trans          &trans  &trans  &trans  &trans  &kp NUMBER_1  &trans  &trans  &trans  &trans  &trans  &trans
+&kp LEFT_SHIFT  &trans  &trans  &trans  &trans  &kp NUMBER_2  &trans  &trans  &trans  &trans  &trans  &trans
+&trans          &trans  &trans  &trans  &trans  &kp NUMBER_3  &trans  &trans  &trans  &trans  &trans  &trans
+                                &trans  &trans  &trans        &trans  &trans  &trans
             >;
         };
     };
