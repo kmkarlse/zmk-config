@@ -32,7 +32,7 @@ static const struct layer_color layer_colors[] = {
     { 182, 73,  BASE_BRIGHTNESS },  /* 0 BASE = cyan (RGB 66,239,245) */
     { 120, 100, BASE_BRIGHTNESS },  /* 1 SYM  = green */
     {   0, 100, BASE_BRIGHTNESS },  /* 2 NUM  = red */
-    {  30, 100, BASE_BRIGHTNESS },  /* 3 L3   = orange */
+    {  30, 100, BASE_BRIGHTNESS },  /* 3 GAME = orange */
 };
 
 static const struct device *led_strip = DEVICE_DT_GET(STRIP_NODE);
